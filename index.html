@@ -1,0 +1,1211 @@
+<!doctype html>
+<html lang="th"><head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260911-05-06910f9","C":{"Abril Fatface":"YACgEZbkUVE,0","Alfa Slab One":"YACgEYS9sJU,0","Anton":"YACgEcYqQ-A,0","Archivo":"YAHO2-t-jNE,0","Arial":"YAGyDvJ_4Ts,0","Bebas Neue":"YACgESME5ew,0","Bricolage Grotesque":"YAFyMcdwzpc,0","Canva Sans":"YAFLd8sKbwc,2","Caveat":"YALBs2ploWQ,0","Comic Sans MS":"YAHO2VMiyZo,0","Cormorant Garamond":"YAFdJhX-538,0","Courier New":"YAGzXiGs0_8,0","DM Sans":"YAD1aU3sLnI,0","DM Serif Display":"YAD1aYG82rc,0","Forum":"YACgEcnnqB4,0","Fraunces":"YAEul-FRQw4,0","Georgia":"YAGzXkO0pEM,0","Helvetica Neue":"YAFcf6CtJfI,0","Impact":"YAFcfnjI7Vk,0","Inter":"YAFdJvSyp_k,3","Iowan Old Style":"YAGNIFa8j9o,0","Jacques Francois":"YAHO2a5g66Q,0","JetBrains Mono":"YAFdJksXcAk,0","Libre Baskerville":"YACgEUFdPdA,0","Manrope":"YAHO2b2feC4,0","Merriweather":"YACgEXvHxxs,0","Montserrat":"YADLjI9qxTA,0","Nunito":"YACgEX8C5Gg,0","Oleo Script":"YACgEQQ14jI,0","Phantom Sans":"YAHO2E8Pb88,0","Playfair Display":"YACgEYmuCJE,0","Poppins":"YAFdJjbTu24,1","Press Start 2P":"YAFyGr-8pmQ,0","Quicksand":"YADWjpfPmdk,0","Raleway":"YACgEVg3xZg,0","Segoe UI":"YAHNdRD1Klw,0","Source Sans 3":"YAG4lO1Mj10,0","Spectral":"YAHO2rVUHIM,0","Times New Roman":"YAGzXW3gftg,0","Times":"YAGzXW3gftg,0","Ubuntu":"YACgERDU--Q,0","Work Sans":"YAGXhLOKv44,0","Yellowtail":"YACgEYG4kG4,0","ui-monospace":"YADlN8CFZ8Q,0","ui-sans-serif":"YACkoN-xg4g,0"}}');</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ฐานข้อมูลที่มาชื่อวัด อำเภอเชียงคำ</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+  
+  
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800&amp;family=Playfair+Display:wght@700&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #20382c;
+      --green: #356b3b;
+      --deep-green: #234a2b;
+      --mist: #eaf7f3;
+      --paper: #fffdf7;
+      --gold: #d88f2c;
+      --red: #d94b42;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Libre Franklin", sans-serif;
+    }
+
+    .app-shell {
+      width: 100%;
+      min-height: calc(100 * min(var(--vh, 1vh), 1vh));
+    }
+
+    .thai-display {
+      font-family: "Playfair Display", "Libre Franklin", serif;
+    }
+
+    .rise {
+      animation: rise .5s ease both;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .map-board {
+      min-height: 450px;
+      overflow: auto;
+      border-radius: 22px;
+      background: #d9edc6;
+      box-shadow: inset 0 0 0 1px rgba(54, 101, 74, .16);
+    }
+
+    .map-canvas {
+      position: relative;
+      width: 100%;
+      min-width: 780px;
+      aspect-ratio: 16 / 10;
+    }
+
+    .map-canvas img {
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .map-pin {
+      position: absolute;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      transform: translate(-7px, -18px);
+    }
+
+    .map-dot {
+      position: relative;
+      width: 15px;
+      height: 15px;
+      flex: 0 0 15px;
+      border: 2px solid #fff;
+      border-radius: 999px 999px 999px 0;
+      background: var(--red);
+      box-shadow: 0 3px 8px rgba(78, 30, 28, .35);
+      transform: rotate(-45deg);
+      transition: transform .18s ease, background .18s ease;
+    }
+
+    .map-dot::after {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border-radius: 999px;
+      background: #fff;
+    }
+
+    .map-label {
+      max-width: 118px;
+      overflow: hidden;
+      padding: 3px 7px;
+      border: 1px solid rgba(34, 73, 43, .14);
+      border-radius: 999px;
+      background: rgba(255, 253, 247, .94);
+      color: #294638;
+      font-size: 10px;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      box-shadow: 0 2px 5px rgba(33, 68, 39, .12);
+    }
+
+    .map-pin:hover,
+    .map-pin:focus-visible,
+    .map-pin.active { z-index: 25; }
+
+    .map-pin:hover .map-dot,
+    .map-pin:focus-visible .map-dot,
+    .map-pin.active .map-dot {
+      background: var(--gold);
+      transform: rotate(-45deg) scale(1.3);
+    }
+
+    .map-pin:hover .map-label,
+    .map-pin:focus-visible .map-label,
+    .map-pin.active .map-label {
+      max-width: 190px;
+      background: #fff;
+    }
+
+    .strategy-card,
+    .district-bar,
+    .temple-row {
+      transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
+    }
+
+    .strategy-card:hover,
+    .strategy-card:focus-visible,
+    .district-bar:hover,
+    .district-bar:focus-visible {
+      transform: translateY(-3px);
+    }
+
+    .temple-row:hover {
+      background: #f3f9ea;
+      transform: translateX(3px);
+    }
+
+    .dialog-backdrop {
+      background: rgba(20, 44, 28, .62);
+      backdrop-filter: blur(5px);
+    }
+
+    .dialog-panel {
+      max-height: calc(90 * min(var(--vh, 1vh), 1vh));
+    }
+
+    @media (max-width: 768px) {
+      .map-board { min-height: 350px; }
+      .map-canvas { min-width: 690px; }
+      .map-label { display: none; }
+      .map-pin:hover .map-label,
+      .map-pin:focus-visible .map-label,
+      .map-pin.active .map-label { display: block; }
+    }
+  
+    body:not(.admin-mode) #dialog-edit-button { display:none !important; }
+    body:not(.admin-mode) #dialog-edit-form { display:none !important; }
+    .admin-mode #developer-button { background:#b45309; }
+  </style>
+  
+ <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<style>
+#real-map { width:100%; height:520px; min-height:420px; border-radius:18px; overflow:hidden; }
+.leaflet-container { z-index: 0 !important; }
+.leaflet-pane, .leaflet-control, .leaflet-top, .leaflet-bottom { z-index: 1 !important; }
+#temple-dialog { z-index: 9999 !important; }
+#admin-login { z-index: 10000 !important; }
+.leaflet-popup-content { font-family: inherit; }
+.temple-popup-title { font-weight:800; font-size:15px; margin-bottom:4px; }
+.temple-popup-zh { color:#557064; font-size:12px; margin-bottom:8px; }
+.temple-popup-btn { display:inline-block; margin-top:4px; padding:7px 10px; border-radius:9px; background:#356b3b; color:#fff !important; text-decoration:none; font-weight:700; font-size:12px; }
+.temple-popup-map { background:#d88f2c; margin-left:5px; }
+</style>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
+</head>
+ <body data-template-id="__page-root" class="app-shell" style="background: rgb(247, 247, 239);">
+  <header data-template-id="header-banner" class="canva-banner border-b border-emerald-950/10" style="background: linear-gradient(135deg, rgb(231, 244, 217), rgb(198, 231, 219));">
+   <div class="w-full max-w-7xl mx-auto px-5 py-7 md:px-8 md:py-9">
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+     <div>
+      <p data-template-id="header-kicker" class="canva-text text-sm font-bold uppercase tracking-[0.16em]" style="color: rgb(70, 119, 66); font-weight: 700; font-style: normal; font-size: 13px; letter-spacing: 0.12rem;">Chiang Kham Temple Naming Archive</p>
+      <h1 data-template-id="page-title" class="canva-text thai-display mt-2 max-w-4xl font-bold leading-tight" style="color: rgb(32, 56, 44); font-weight: 700; font-style: normal; font-size: 32px;">ฐานข้อมูลที่มาชื่อวัด อำเภอเชียงคำ จังหวัดพะเยา</h1>
+      <p data-template-id="page-subtitle" class="canva-text mt-3 max-w-3xl leading-7" style="color: rgb(69, 96, 87); font-weight: 400; font-style: normal; font-size: 16px; line-height: 1.55;">รวมข้อมูลวัด 95 แห่ง พร้อมชื่อภาษาจีน ที่มาของชื่อ กลวิธีการตั้งชื่อ และตำแหน่งสำรวจบนแผนที่</p>
+     </div>
+     <div class="flex gap-3">
+      <div class="rounded-2xl bg-white/80 px-4 py-3 text-center shadow-sm"><strong id="temple-total" class="block text-2xl font-extrabold">95</strong> <span data-template-id="temple-total-label" class="canva-text text-xs font-semibold" style="color: rgb(82, 112, 97); font-weight: 600; font-style: normal; font-size: 16px;">วัดในฐานข้อมูล</span>
+      </div>
+      <div class="rounded-2xl bg-white/80 px-4 py-3 text-center shadow-sm"><strong id="strategy-total" class="block text-2xl font-extrabold">14</strong> <span data-template-id="strategy-total-label" class="canva-text text-xs font-semibold" style="color: rgb(82, 112, 97); font-weight: 600; font-style: normal; font-size: 16px;">กลวิธีที่พบ</span>
+      </div>
+     </div>
+    </div>
+   </div>
+  </header>
+  <main class="w-full max-w-7xl mx-auto px-5 py-7 md:px-8 md:py-10">
+   <section class="rise" aria-labelledby="explore-heading">
+    <div class="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+     <div>
+      <p data-template-id="explore-kicker" class="canva-text text-sm font-bold uppercase tracking-widest" style="color: rgb(71, 123, 65); font-weight: 700; font-style: normal; font-size: 16px;">ค้นหาและวิเคราะห์</p>
+      <h2 id="explore-heading" data-template-id="explore-title" class="canva-text mt-1 font-bold" style="color: rgb(32, 56, 44); font-weight: 700; font-style: normal; font-size: 24px;">สำรวจชื่อวัดตามตำบลและกลวิธีการตั้งชื่อ</h2>
+     </div><button id="clear-filters" type="button" data-template-id="clear-filter-button" class="canva-button rounded-full px-4 py-2 text-sm font-bold transition hover:brightness-95 focus:outline-none focus:ring-4 focus:ring-amber-200" style="background: rgb(246, 219, 155); color: rgb(92, 67, 21); font-weight: 700; font-style: normal; font-size: 16px;">ล้างตัวกรอง</button>
+    </div>
+    <div class="grid gap-4 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-emerald-950/10 md:grid-cols-3">
+     <div><label data-template-id="search-label" class="canva-text mb-2 block text-sm font-bold" for="search-input" style="color: rgb(41, 70, 56); font-weight: 700; font-style: normal; font-size: 16px;">ค้นหาชื่อวัด</label>
+      <div class="relative"><i data-lucide="search" class="absolute left-3 top-3.5 h-4 w-4 text-emerald-700"></i> <input id="search-input" data-template-id="search-input" class="canva-input w-full rounded-xl border border-emerald-900/15 bg-stone-50 py-3 pl-10 pr-3 text-sm outline-none focus:border-emerald-700 focus:ring-4 focus:ring-emerald-100" placeholder="พิมพ์ชื่อวัดภาษาไทย ภาษาจีน หรือตำบล" style="color: rgb(82, 100, 91); font-weight: 400; font-style: normal; font-size: 16px;">
+      </div>
+     </div>
+     <div><label data-template-id="subdistrict-label" class="canva-text mb-2 block text-sm font-bold" for="subdistrict-filter" style="color: rgb(41, 70, 56); font-weight: 700; font-style: normal; font-size: 16px;">เลือกตำบล</label> <select id="subdistrict-filter" class="w-full rounded-xl border border-emerald-900/15 bg-stone-50 px-3 py-3 text-sm outline-none focus:border-emerald-700 focus:ring-4 focus:ring-emerald-100"></select>
+     </div>
+     <div><label data-template-id="strategy-label" class="canva-text mb-2 block text-sm font-bold" for="strategy-filter" style="color: rgb(41, 70, 56); font-weight: 700; font-style: normal; font-size: 16px;">กลวิธีการตั้งชื่อ</label> <select id="strategy-filter" class="w-full rounded-xl border border-emerald-900/15 bg-stone-50 px-3 py-3 text-sm outline-none focus:border-emerald-700 focus:ring-4 focus:ring-emerald-100"></select>
+     </div>
+    </div>
+   </section>
+   <section data-template-id="strategy-summary-panel" class="canva-panel mt-8 rounded-3xl p-5 shadow-sm ring-1 ring-emerald-950/10 md:p-7" aria-labelledby="strategy-summary-heading" style="background: rgb(255, 253, 247);">
+    <div class="flex flex-col justify-between gap-3 md:flex-row md:items-end">
+     <div>
+      <p data-template-id="strategy-summary-kicker" class="canva-text text-xs font-bold uppercase tracking-widest" style="color: rgb(178, 116, 31); font-weight: 700; font-style: normal; font-size: 16px;">ภาพรวมการตั้งชื่อ</p>
+      <h2 id="strategy-summary-heading" data-template-id="strategy-summary-title" class="canva-text mt-1 font-bold" style="color: rgb(32, 56, 44); font-weight: 700; font-style: normal; font-size: 24px;">กลวิธีการตั้งชื่อวัดที่พบในอำเภอเชียงคำ</h2>
+      <p data-template-id="strategy-summary-help" class="canva-text mt-2 max-w-4xl text-sm leading-6" style="color: rgb(91, 108, 97); font-weight: 400; font-style: normal; font-size: 14px; line-height: 1.55;">กลวิธีที่พบมากที่สุดคือการใช้ชื่อหมู่บ้าน สะท้อนบทบาทของวัดในฐานะส่วนหนึ่งของชุมชน ขณะที่ชื่อจากภูมิประเทศ ความเชื่อ คำมงคล และโบราณสถานช่วยบอกเล่าภูมิทัศน์ ความทรงจำ และอัตลักษณ์ของพื้นที่</p>
+     </div><span id="strategy-filter-status" class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-900"></span>
+    </div>
+    <div id="strategy-summary" class="mt-6 grid gap-3 sm:grid-cols-2"></div>
+   </section>
+   <section class="mt-8 grid gap-7 lg:grid-cols-[.82fr_1.18fr]">
+    <article data-template-id="subdistrict-chart-panel" class="canva-panel rounded-3xl p-5 shadow-sm ring-1 ring-emerald-950/10 md:p-6" style="background: rgb(255, 253, 247);">
+     <p data-template-id="chart-kicker" class="canva-text text-xs font-bold uppercase tracking-widest" style="color: rgb(178, 116, 31); font-weight: 700; font-style: normal; font-size: 16px;">สรุปตามพื้นที่</p>
+     <h2 data-template-id="subdistrict-chart-title" class="canva-text mt-1 font-bold" style="color: rgb(32, 56, 44); font-weight: 700; font-style: normal; font-size: 24px;">จำนวนวัดในแต่ละตำบล</h2>
+     <p data-template-id="chart-help" class="canva-text mt-2 text-sm leading-6" style="color: rgb(91, 108, 97); font-weight: 400; font-style: normal; font-size: 14px; line-height: 1.5;">คลิกแท่งกราฟหรือชื่อตำบลเพื่อกรองรายชื่อวัดในพื้นที่นั้น</p>
+     <div id="subdistrict-chart" class="mt-7 flex h-56 items-end gap-2 border-b border-emerald-900/10 pb-1"></div>
+     <div id="subdistrict-labels" class="mt-3 flex gap-2"></div>
+    </article>
+    <article data-template-id="map-panel" class="canva-panel rounded-3xl p-5 shadow-sm ring-1 ring-emerald-950/10 md:p-6" style="background: rgb(255, 253, 247);">
+     <div class="flex flex-wrap items-start justify-between gap-3">
+      <div>
+       <p data-template-id="map-kicker" class="canva-text text-xs font-bold uppercase tracking-widest" style="color: rgb(178, 116, 31); font-weight: 700; font-style: normal; font-size: 16px;">แผนที่เชิงโต้ตอบ</p>
+       <h2 data-template-id="map-title" class="canva-text mt-1 font-bold" style="color: rgb(32, 56, 44); font-weight: 700; font-style: normal; font-size: 24px;">ตำแหน่งวัดในอำเภอเชียงคำ</h2>
+      </div><span id="map-badge" data-template-id="map-badge" class="canva-tag rounded-full px-3 py-1 text-xs font-bold" style="background: rgb(247, 216, 211); color: rgb(165, 40, 38); font-weight: 700; font-style: normal; font-size: 16px;">95 หมุด</span>
+     </div>
+     <p data-template-id="map-help" class="canva-text mt-2 text-sm leading-6" style="color: rgb(91, 108, 97); font-weight: 400; font-style: normal; font-size: 14px; line-height: 1.5;">แผนที่ถนนจริงแบบโต้ตอบ สามารถซูม เลื่อน และกดหมุดเพื่อดูประวัติของวัดได้ ขณะนี้ยังไม่มีละติจูด–ลองจิจูดรายวัด จึงแสดงตำแหน่งชั่วคราวตามตำบล และปุ่ม “เปิดใน Google Maps” จะค้นหาวัดจริงจากชื่อวัด</p>
+     <div class="map-board mt-5">
+      <div id="real-map" aria-label="แผนที่วัดในอำเภอเชียงคำ"></div>
+     </div>
+    </article>
+   </section>
+   <section class="mt-8 grid gap-7 lg:grid-cols-[.68fr_1.32fr]">
+    <section data-template-id="list-panel" class="canva-panel rounded-3xl p-5 shadow-sm ring-1 ring-emerald-950/10 md:p-7 lg:col-span-2" aria-labelledby="temple-list-heading" style="background: rgb(255, 253, 247);">
+     <div class="flex flex-wrap items-end justify-between gap-3">
+      <div>
+       <p data-template-id="list-kicker" class="canva-text text-xs font-bold uppercase tracking-widest" style="color: rgb(178, 116, 31); font-weight: 700; font-style: normal; font-size: 16px;">สารบัญวัด</p>
+       <h2 id="temple-list-heading" data-template-id="list-title" class="canva-text mt-1 font-bold" style="color: rgb(32, 56, 44); font-weight: 700; font-style: normal; font-size: 24px;">รายชื่อวัดตามตัวกรอง</h2>
+      </div><span id="visible-count" class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-900"></span>
+     </div>
+     <div id="temple-list" class="mt-5 max-h-[560px] divide-y divide-emerald-950/10 overflow-auto rounded-2xl border border-emerald-950/10"></div>
+    </section>
+   </section>
+  </main>
+
+  <div id="admin-login" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 dialog-backdrop">
+    <div class="w-full max-w-md rounded-3xl bg-[#fffdf7] p-6 shadow-2xl">
+      <div class="flex items-center justify-between"><div><p class="text-xs font-bold uppercase tracking-widest text-amber-700">Developer</p><h2 class="mt-1 text-2xl font-extrabold text-emerald-950">เข้าสู่โหมดผู้พัฒนา</h2></div><button id="admin-login-close" class="rounded-full bg-emerald-50 px-3 py-2">✕</button></div>
+      <p class="mt-3 text-sm leading-6 text-stone-600">หน้านี้สำหรับผู้ดูแลข้อมูลเท่านั้น ผู้เข้าชมทั่วไปจะไม่มีปุ่มแก้ไข</p>
+      <input id="admin-email" type="email" autocomplete="username" class="mt-4 w-full rounded-xl border border-emerald-900/15 bg-white px-3 py-3" placeholder="อีเมลผู้พัฒนา">
+      <input id="admin-password" type="password" autocomplete="current-password" class="mt-3 w-full rounded-xl border border-emerald-900/15 bg-white px-3 py-3" placeholder="รหัสผ่าน">
+      <button id="admin-login-submit" class="mt-3 w-full rounded-xl bg-emerald-700 px-4 py-3 font-bold text-white">เข้าสู่ระบบ</button>
+      <p id="admin-login-status" class="mt-3 text-sm font-semibold"></p>
+    </div>
+  </div>
+  <div id="admin-panel" class="fixed bottom-5 right-5 z-40 hidden w-[min(94vw,520px)] rounded-3xl bg-white p-5 shadow-2xl ring-1 ring-emerald-950/10">
+    <div class="flex items-start justify-between gap-3"><div><p class="text-xs font-bold uppercase tracking-widest text-amber-700">Developer mode</p><h3 class="text-xl font-extrabold text-emerald-950">จัดการข้อมูลวัด</h3></div><button id="admin-logout" class="rounded-xl bg-stone-100 px-3 py-2 text-sm font-bold">ออกจากโหมด</button></div>
+    <div class="mt-4 grid gap-3 sm:grid-cols-2">
+      <input id="add-name-th" class="rounded-xl border px-3 py-2" placeholder="ชื่อวัดภาษาไทย *">
+      <input id="add-name-zh" class="rounded-xl border px-3 py-2" placeholder="ชื่อวัดภาษาจีน">
+      <select id="add-subdistrict" class="rounded-xl border px-3 py-2"></select>
+      <select id="add-strategy" class="rounded-xl border px-3 py-2"></select>
+      <input id="add-map-link" class="rounded-xl border px-3 py-2 sm:col-span-2" placeholder="ลิงก์ Google Maps">
+      <input id="add-latitude" type="number" step="any" class="rounded-xl border px-3 py-2" placeholder="ละติจูด (Latitude)">
+      <input id="add-longitude" type="number" step="any" class="rounded-xl border px-3 py-2" placeholder="ลองจิจูด (Longitude)">
+      <textarea id="add-history" rows="3" class="rounded-xl border px-3 py-2 sm:col-span-2" placeholder="ประวัติที่มาของชื่อวัด"></textarea>
+    </div>
+    <button id="save-temple-button" class="mt-3 w-full rounded-xl bg-amber-600 px-4 py-3 font-bold text-white">+ เพิ่มวัด</button>
+    <button id="export-data" class="mt-2 w-full rounded-xl bg-emerald-100 px-4 py-2 text-sm font-bold text-emerald-900">ส่งออกข้อมูล JSON สำรอง</button>
+    <input id="import-data" type="file" accept="application/json" class="mt-2 block w-full text-sm">
+    <p id="save-status" class="mt-2 text-sm font-semibold"></p>
+    <p class="mt-2 text-xs leading-5 text-stone-500">ระบบออนไลน์จะทำงานเมื่อใส่ Supabase URL และ Publishable Key ในโค้ด โดยผู้เข้าชมทั่วไปอ่านได้ แต่การเพิ่ม/แก้ไขต้องผ่านบัญชีผู้พัฒนาและ RLS</p>
+  </div>
+  <button id="developer-button" type="button" class="fixed bottom-5 left-5 z-40 rounded-full bg-emerald-950 px-4 py-3 text-sm font-bold text-white shadow-lg">🔐 ผู้พัฒนา</button>
+
+  <footer data-template-id="footer-section" class="canva-footer mt-12" style="background: rgb(32, 56, 44);">
+   <div class="w-full max-w-7xl mx-auto px-5 py-7 md:px-8">
+    <p data-template-id="footer-text" class="canva-text text-sm" style="color: rgb(217, 234, 215); font-weight: 400; font-style: normal; font-size: 14px;">ฐานข้อมูลการศึกษาที่มาของชื่อวัด อำเภอเชียงคำ จังหวัดพะเยา • ไทย–จีน</p>
+   </div>
+  </footer>
+  <div id="temple-dialog" data-template-id="temple-dialog" class="canva-panel dialog-backdrop fixed inset-0 z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="dialog-heading" style="background: rgba(20, 44, 28, 0.62);">
+   <div class="dialog-panel w-full max-w-4xl overflow-y-auto rounded-3xl bg-[#fffdf7] shadow-2xl">
+    <div class="sticky top-0 z-10 flex items-start justify-between border-b border-emerald-950/10 bg-[#fffdf7]/95 px-5 py-5 backdrop-blur md:px-7">
+     <div>
+      <p data-template-id="dialog-kicker" class="canva-text text-xs font-bold uppercase tracking-widest" style="color: rgb(178, 116, 31); font-weight: 700; font-style: normal; font-size: 16px;">ข้อมูลวัดและการแก้ไข</p>
+      <h2 id="dialog-heading" data-template-id="dialog-title" class="canva-text mt-1 font-bold" style="color: rgb(32, 56, 44); font-weight: 700; font-style: normal; font-size: 24px;">ประวัติที่มาของชื่อวัด</h2>
+      <p id="dialog-temple-name" class="thai-display mt-2 text-xl font-bold text-emerald-950"></p>
+      <p id="dialog-temple-zh" class="mt-1 text-sm font-semibold text-red-700"></p>
+     </div><button id="dialog-close" type="button" data-template-id="dialog-close-button" class="canva-button rounded-full p-2 focus:outline-none focus:ring-4 focus:ring-emerald-100" aria-label="ปิดหน้าต่าง" style="background: rgb(234, 247, 243); color: rgb(41, 70, 56);"> <i data-lucide="x" class="h-5 w-5"></i> </button>
+    </div>
+    <div class="px-5 py-6 md:px-7">
+     <div class="grid gap-3 sm:grid-cols-3">
+      <div class="rounded-2xl bg-emerald-50 p-3">
+       <p data-template-id="dialog-subdistrict-caption" class="canva-text text-xs font-bold" style="color: rgb(71, 123, 65); font-weight: 700; font-style: normal; font-size: 16px;">ตำบล</p>
+       <p id="dialog-subdistrict" class="mt-1 font-bold text-emerald-950"></p>
+      </div>
+      <div class="rounded-2xl bg-amber-50 p-3 sm:col-span-2">
+       <p data-template-id="dialog-strategy-caption" class="canva-text text-xs font-bold" style="color: rgb(154, 104, 28); font-weight: 700; font-style: normal; font-size: 16px;">กลวิธีการตั้งชื่อ</p>
+       <p id="dialog-strategy-display" class="mt-1 font-bold text-stone-800"></p>
+      </div>
+     </div>
+     <div class="mt-6 grid gap-4 md:grid-cols-2">
+      <div class="rounded-2xl bg-stone-50 p-4">
+       <p data-template-id="dialog-name-zh-label" class="canva-text mb-2 text-sm font-bold" style="color: rgb(41, 70, 56); font-weight: 700; font-style: normal; font-size: 16px;">ชื่อวัดภาษาจีน</p>
+       <p id="dialog-name-zh-display" class="leading-6 text-stone-800"></p>
+      </div>
+      <div class="rounded-2xl bg-stone-50 p-4">
+       <p data-template-id="dialog-strategy-label" class="canva-text mb-2 text-sm font-bold" style="color: rgb(41, 70, 56); font-weight: 700; font-style: normal; font-size: 16px;">กลวิธีการตั้งชื่อ</p>
+       <p id="dialog-strategy-readonly" class="leading-6 text-stone-800"></p>
+      </div>
+      <div class="rounded-2xl bg-stone-50 p-4 md:col-span-2">
+       <p data-template-id="dialog-history-th-label" class="canva-text mb-2 text-sm font-bold" style="color: rgb(41, 70, 56); font-weight: 700; font-style: normal; font-size: 16px;">ประวัติที่มาของชื่อวัด (ไทย)</p>
+       <p id="dialog-history-th-display" class="whitespace-pre-line leading-7 text-stone-800"></p>
+      </div>
+      <div class="rounded-2xl bg-stone-50 p-4 md:col-span-2">
+       <p data-template-id="dialog-history-zh-label" class="canva-text mb-2 text-sm font-bold" style="color: rgb(41, 70, 56); font-weight: 700; font-style: normal; font-size: 16px;">寺名来源（中文）</p>
+       <p id="dialog-history-zh-display" class="whitespace-pre-line leading-7 text-stone-800"></p>
+      </div>
+      <div class="md:col-span-2">
+       <div id="dialog-photo-wrap" class="mb-5 hidden overflow-hidden rounded-2xl bg-stone-100 ring-1 ring-emerald-950/10">
+        <img id="dialog-photo" src="" alt="ภาพวัด" class="max-h-[720px] w-full object-contain">
+       </div>
+       <div class="flex flex-wrap gap-3"><button id="dialog-edit-button" type="button" data-template-id="dialog-edit-button" class="canva-button inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-emerald-200" style="background: rgb(53, 107, 59); color: rgb(255, 255, 255); font-weight: 700;"><i data-lucide="pencil" class="h-4 w-4"></i><span data-template-id="dialog-edit-button-text" class="canva-text" style="color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;">แก้ไขข้อมูลวัด</span></button><a id="dialog-maps-link" data-template-id="dialog-maps-button" class="canva-button inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-amber-200" target="_blank" rel="noopener noreferrer" style="background: rgb(216, 143, 44); color: rgb(255, 255, 255); font-weight: 700;"><i data-lucide="map-pinned" class="h-4 w-4"></i><span data-template-id="dialog-maps-button-text" class="canva-text" style="color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;">เปิดใน Google Maps</span></a>
+       </div>
+      </div>
+      <form id="dialog-edit-form" class="mt-5 hidden rounded-2xl bg-emerald-50 p-4" novalidate="">
+       <div class="grid gap-4 md:grid-cols-2">
+        <div><label data-template-id="edit-name-zh-label" class="canva-text mb-1 block text-sm font-bold" for="dialog-name-zh" style="color: rgb(41, 70, 56); font-weight: 700; font-style: normal; font-size: 16px;">ชื่อวัดภาษาจีน</label><input id="dialog-name-zh" class="w-full rounded-xl border border-emerald-900/15 bg-white px-3 py-2">
+        </div>
+        <div><label data-template-id="edit-strategy-label" class="canva-text mb-1 block text-sm font-bold" for="dialog-strategy-select" style="color: rgb(41, 70, 56); font-weight: 700; font-style: normal; font-size: 16px;">กลวิธีการตั้งชื่อ</label><select id="dialog-strategy-select" class="w-full rounded-xl border border-emerald-900/15 bg-white px-3 py-2"></select>
+        </div>
+        <div class="md:col-span-2"><label data-template-id="edit-history-th-label" class="canva-text mb-1 block text-sm font-bold" for="dialog-history-th" style="color: rgb(41, 70, 56); font-weight: 700; font-style: normal; font-size: 16px;">ประวัติที่มาของชื่อวัด (ไทย)</label><textarea id="dialog-history-th" rows="3" class="w-full rounded-xl border border-emerald-900/15 bg-white px-3 py-2"></textarea>
+        </div>
+        <div class="md:col-span-2"><label data-template-id="edit-history-zh-label" class="canva-text mb-1 block text-sm font-bold" for="dialog-history-zh" style="color: rgb(41, 70, 56); font-weight: 700; font-style: normal; font-size: 16px;">寺名来源（中文）</label><textarea id="dialog-history-zh" rows="3" class="w-full rounded-xl border border-emerald-900/15 bg-white px-3 py-2"></textarea>
+        </div>
+        <div><label data-template-id="edit-map-link-label" class="canva-text mb-1 block text-sm font-bold" for="dialog-map-link" style="color: rgb(41, 70, 56); font-weight: 700; font-style: normal; font-size: 16px;">ลิงก์ Google Maps</label><input id="dialog-map-link" type="url" class="w-full rounded-xl border border-emerald-900/15 bg-white px-3 py-2">
+        </div>
+        <div class="md:col-span-2 rounded-2xl bg-white/70 p-3 ring-1 ring-emerald-900/10">
+         <label data-template-id="edit-image-url-label" class="canva-text mb-2 block text-sm font-bold" for="dialog-image-url" style="color: rgb(41, 70, 56); font-weight: 700; font-style: normal; font-size: 16px;">ภาพวัด</label>
+         <div class="flex flex-wrap items-center gap-3">
+          <label for="dialog-image-file" class="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2 font-bold text-white hover:bg-emerald-800">📷 เพิ่มรูปจากเครื่อง</label>
+          <input id="dialog-image-file" type="file" accept="image/*" class="hidden">
+          <button id="dialog-remove-image" type="button" class="rounded-xl bg-stone-200 px-4 py-2 font-bold text-stone-700">ลบรูป</button>
+         </div>
+         <p id="dialog-image-status" class="mt-2 text-xs text-stone-600">เลือกรูปจากคอมพิวเตอร์ได้เลย ระบบจะย่อรูปก่อนบันทึก</p>
+         <input id="dialog-image-url" type="hidden">
+        </div>
+        <div><label class="mb-1 block text-sm font-bold" for="dialog-latitude">พิกัด Latitude</label><input id="dialog-latitude" type="number" step="any" class="w-full rounded-xl border border-emerald-900/15 bg-white px-3 py-2"></div>
+        <div><label class="mb-1 block text-sm font-bold" for="dialog-longitude">พิกัด Longitude</label><input id="dialog-longitude" type="number" step="any" class="w-full rounded-xl border border-emerald-900/15 bg-white px-3 py-2"></div>
+        </div>
+       </div>
+       <div class="mt-4 flex items-center gap-3"><button id="dialog-save-button" data-template-id="dialog-save-button" type="submit" class="canva-button rounded-xl px-4 py-2 text-sm font-bold" style="background: rgb(216, 143, 44); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;">บันทึกการแก้ไข</button><span id="dialog-save-status" class="text-sm font-semibold"></span>
+       </div>
+      </form>
+     </div>
+    </div>
+   </div>
+  </div>
+  <template id="temple-row-template"><button type="button" class="temple-row flex w-full items-center justify-between gap-3 px-4 py-4 text-left focus:outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-600">
+    <div class="min-w-0">
+     <p class="temple-name font-bold"></p>
+     <p class="temple-zh mt-1 truncate text-sm text-red-700"></p>
+    </div>
+    <div class="shrink-0 text-right">
+     <p class="temple-subdistrict text-xs font-bold text-emerald-800"></p>
+     <p class="temple-strategy mt-1 max-w-40 text-xs leading-4 text-stone-500"></p>
+    </div></button>
+  </template>
+  <script>
+    const subdistricts = ["ทุ่งผาสุข", "น้ำแวน", "ฝายกวาง", "ร่มเย็น", "หย่วน", "อ่างทอง", "เจดีย์คำ", "เชียงบาน", "เวียง", "แม่ลาว"];
+
+    const strategyOrder = [
+      "ชื่อหมู่บ้าน",
+      "ลักษณะภูมิประเทศ",
+      "ชื่อพันธุ์ไม้",
+      "ความเชื่อเกี่ยวกับสิ่งศักดิ์สิทธิ์",
+      "ถ้อยคำที่เป็นมงคลนาม",
+      "โบราณสถานหรือโบราณวัตถุ",
+      "เหตุการณ์ทางประวัติศาสตร์",
+      "ผู้ที่มีส่วนสำคัญในการสร้างวัด",
+      "สิ่งศักดิ์สิทธิ์ + ชื่อหมู่บ้าน",
+      "สิ่งศักดิ์สิทธิ์ + สภาพภูมิประเทศ",
+      "สิ่งศักดิ์สิทธิ์ + ตำนานหรือนิทานพื้นบ้าน",
+      "ชื่อแหล่งน้ำ + สิ่งศักดิ์สิทธิ์",
+      "สภาพภูมิประเทศ + โบราณสถานหรือโบราณวัตถุ",
+      "สภาพภูมิประเทศ + ถ้อยคำที่เป็นมงคล"
+    ];
+
+    const strategyHistories = {
+      "ชื่อหมู่บ้าน": "ชื่อวัดใช้ชื่อหมู่บ้านหรือชุมชนที่วัดตั้งอยู่เป็นหลัก แสดงความสัมพันธ์ระหว่างวัดกับชุมชนท้องถิ่นซึ่งเป็นศูนย์รวมศรัทธาและกิจกรรมทางสังคม",
+      "ลักษณะภูมิประเทศ": "ชื่อวัดสะท้อนลักษณะพื้นที่ดั้งเดิม เช่น ดอน เนิน ทุ่ง ผา หรือเส้นทางธรรมชาติที่ชุมชนใช้เรียกขานกันมา",
+      "ชื่อพันธุ์ไม้": "ชื่อวัดเชื่อมโยงกับพันธุ์ไม้หรือพืชเด่นในพื้นที่ ซึ่งมักเป็นภาพจำของชุมชนและใช้เป็นชื่อเรียกสถานที่",
+      "ความเชื่อเกี่ยวกับสิ่งศักดิ์สิทธิ์": "ชื่อวัดสัมพันธ์กับสิ่งศักดิ์สิทธิ์ พระประธาน หรือความเชื่อร่วมของชุมชนที่ได้รับการเคารพสืบต่อกันมา",
+      "ถ้อยคำที่เป็นมงคลนาม": "ชื่อวัดเลือกใช้คำที่มีความหมายดีงาม สื่อถึงความสุข ความเจริญ ความมั่นคง และสิริมงคลของชุมชน",
+      "โบราณสถานหรือโบราณวัตถุ": "ชื่อวัดเกี่ยวข้องกับโบราณสถาน โบราณวัตถุ หรือหลักฐานสำคัญที่ปรากฏอยู่ในบริเวณวัดและชุมชน",
+      "เหตุการณ์ทางประวัติศาสตร์": "ชื่อวัดสะท้อนเหตุการณ์ในอดีต เช่น การย้ายถิ่น การสร้างวัด การบูรณะ หรือการเปลี่ยนแปลงสำคัญของชุมชน",
+      "ผู้ที่มีส่วนสำคัญในการสร้างวัด": "ชื่อวัดตั้งขึ้นเพื่อรำลึกถึงผู้สร้าง ผู้อุปถัมภ์ หรือบุคคลสำคัญที่มีบทบาทต่อการก่อตั้งวัด",
+      "สิ่งศักดิ์สิทธิ์ + ชื่อหมู่บ้าน": "ชื่อวัดเป็นคำประสมระหว่างสิ่งศักดิ์สิทธิ์หรือพระธาตุกับชื่อหมู่บ้านที่เป็นที่ตั้งของวัด",
+      "สิ่งศักดิ์สิทธิ์ + สภาพภูมิประเทศ": "ชื่อวัดประสมความศรัทธาต่อสิ่งศักดิ์สิทธิ์เข้ากับลักษณะภูมิประเทศที่โดดเด่นในพื้นที่",
+      "สิ่งศักดิ์สิทธิ์ + ตำนานหรือนิทานพื้นบ้าน": "ชื่อวัดเชื่อมโยงความศรัทธากับตำนานหรือเรื่องเล่าท้องถิ่นที่ชุมชนถ่ายทอดต่อกันมา",
+      "ชื่อแหล่งน้ำ + สิ่งศักดิ์สิทธิ์": "ชื่อวัดประสมชื่อแหล่งน้ำหรือห้วยในท้องถิ่นกับสิ่งศักดิ์สิทธิ์ที่ชุมชนเคารพบูชา",
+      "สภาพภูมิประเทศ + โบราณสถานหรือโบราณวัตถุ": "ชื่อวัดใช้ทั้งลักษณะพื้นที่และหลักฐานโบราณเพื่อบ่งบอกอัตลักษณ์ทางภูมิศาสตร์และประวัติศาสตร์",
+      "สภาพภูมิประเทศ + ถ้อยคำที่เป็นมงคล": "ชื่อวัดประสมคำบอกลักษณะพื้นที่กับคำมงคล เพื่อสร้างความหมายที่ดีงามแก่สถานที่และชุมชน"
+    };
+
+    const strategyChinese = {
+      "ชื่อหมู่บ้าน": "以村落名称命名",
+      "ลักษณะภูมิประเทศ": "以地形地貌命名",
+      "ชื่อพันธุ์ไม้": "以植物名称命名",
+      "ความเชื่อเกี่ยวกับสิ่งศักดิ์สิทธิ์": "以神圣信仰命名",
+      "ถ้อยคำที่เป็นมงคลนาม": "以吉祥词汇命名",
+      "โบราณสถานหรือโบราณวัตถุ": "以古迹或文物命名",
+      "เหตุการณ์ทางประวัติศาสตร์": "以历史事件命名",
+      "ผู้ที่มีส่วนสำคัญในการสร้างวัด": "以建寺重要人物命名",
+      "สิ่งศักดิ์สิทธิ์ + ชื่อหมู่บ้าน": "神圣信仰与村名组合命名",
+      "สิ่งศักดิ์สิทธิ์ + สภาพภูมิประเทศ": "神圣信仰与地形组合命名",
+      "สิ่งศักดิ์สิทธิ์ + ตำนานหรือนิทานพื้นบ้าน": "神圣信仰与民间传说命名",
+      "ชื่อแหล่งน้ำ + สิ่งศักดิ์สิทธิ์": "水源名称与神圣信仰组合命名",
+      "สภาพภูมิประเทศ + โบราณสถานหรือโบราณวัตถุ": "地形与古迹组合命名",
+      "สภาพภูมิประเทศ + ถ้อยคำที่เป็นมงคล": "地形与吉祥词汇组合命名"
+    };
+
+    const mapAreas = {
+      "ทุ่งผาสุข": [20, 25],
+      "น้ำแวน": [36, 29],
+      "ฝายกวาง": [52, 34],
+      "ร่มเย็น": [68, 30],
+      "หย่วน": [49, 60],
+      "อ่างทอง": [73, 60],
+      "เจดีย์คำ": [29, 58],
+      "เชียงบาน": [59, 48],
+      "เวียง": [45, 45],
+      "แม่ลาว": [81, 46]
+    };
+
+    const rawTemples = `
+วัดทุ่งควบ|ทุ่งผาสุข|ชื่อหมู่บ้าน
+วัดผาฮาว|ทุ่งผาสุข|ชื่อหมู่บ้าน
+วัดพระธาตุผาฮาว|ทุ่งผาสุข|สิ่งศักดิ์สิทธิ์ + ชื่อหมู่บ้าน
+วัดไร่แสนสุข|ทุ่งผาสุข|ชื่อหมู่บ้าน
+วัดหัวทุ่ง|ทุ่งผาสุข|ลักษณะภูมิประเทศ
+วัดกิ่วชมภู|น้ำแวน|ลักษณะภูมิประเทศ
+วัดเกษมสันติวนาราม|น้ำแวน|ถ้อยคำที่เป็นมงคลนาม
+วัดไคร้ป่าคา|น้ำแวน|ชื่อหมู่บ้าน
+วัดถ้ำบุญนาค|น้ำแวน|สิ่งศักดิ์สิทธิ์ + สภาพภูมิประเทศ
+วัดป่าแดงสามัคคี|น้ำแวน|ชื่อหมู่บ้าน
+วัดผาลาด|น้ำแวน|ชื่อหมู่บ้าน
+วัดพระธาตุศรีชุม|น้ำแวน|สิ่งศักดิ์สิทธิ์ + ชื่อหมู่บ้าน
+วัดแม่ต๋ำ|น้ำแวน|ชื่อหมู่บ้าน
+วัดศรีกู่เอี้ยง|น้ำแวน|สภาพภูมิประเทศ + โบราณสถานหรือโบราณวัตถุ
+วัดศรีชุม|น้ำแวน|ชื่อพันธุ์ไม้
+วัดศรีมงคล|น้ำแวน|ถ้อยคำที่เป็นมงคลนาม
+วัดสนธิ์พัฒนา|น้ำแวน|ผู้ที่มีส่วนสำคัญในการสร้างวัด
+วัดทุ่งหล่ม|ฝายกวาง|ชื่อหมู่บ้าน
+วัดปัวแหลง|ฝายกวาง|ชื่อหมู่บ้าน
+วัดปัวใหม่|ฝายกวาง|ชื่อหมู่บ้าน
+วัดฝายกวาง|ฝายกวาง|ชื่อหมู่บ้าน
+วัดพระธาตุขุนห้วยสวด|ฝายกวาง|ชื่อแหล่งน้ำ + สิ่งศักดิ์สิทธิ์
+วัดแวนโค้ง|ฝายกวาง|ชื่อหมู่บ้าน
+วัดแวนโค้งเก่า|ฝายกวาง|เหตุการณ์ทางประวัติศาสตร์
+วัดศรีพรมบัวนาค|ฝายกวาง|สิ่งศักดิ์สิทธิ์ + ชื่อหมู่บ้าน
+วัดสลาบ|ฝายกวาง|ชื่อหมู่บ้าน
+วัดหนอง|ฝายกวาง|ชื่อหมู่บ้าน
+วัดหนองลื้อ|ฝายกวาง|ชื่อหมู่บ้าน
+วัดเกษตรสมบูรณ์|ร่มเย็น|ชื่อหมู่บ้าน
+วัดคุ้ม|ร่มเย็น|เหตุการณ์ทางประวัติศาสตร์
+วัดดอนมูล|ร่มเย็น|ลักษณะภูมิประเทศ
+วัดทุ่งรวงทอง|ร่มเย็น|ชื่อหมู่บ้าน
+วัดปางถ้ำ|ร่มเย็น|ชื่อหมู่บ้าน
+วัดพระธาตุดอยคำ|ร่มเย็น|สิ่งศักดิ์สิทธิ์ + ตำนานหรือนิทานพื้นบ้าน
+วัดร้อง|ร่มเย็น|ชื่อหมู่บ้าน
+วัดร่องส้าน|ร่มเย็น|ชื่อหมู่บ้าน
+วัดร้องใหม่|ร่มเย็น|ชื่อหมู่บ้าน
+วัดสบสา|ร่มเย็น|ชื่อหมู่บ้าน
+วัดหนองร่มเย็น (หนอง)|ร่มเย็น|ชื่อหมู่บ้าน
+วัดห้วยสา|ร่มเย็น|ชื่อหมู่บ้าน
+วัดกู่ผาแดง|หย่วน|โบราณสถานหรือโบราณวัตถุ
+วัดแช่แห้ง|หย่วน|ชื่อหมู่บ้าน
+วัดดอนไชย|หย่วน|ชื่อหมู่บ้าน
+วัดแดนเมือง|หย่วน|ชื่อหมู่บ้าน
+วัดนันตาราม|หย่วน|ผู้ที่มีส่วนสำคัญในการสร้างวัด
+วัดบุญนาค|หย่วน|ชื่อพันธุ์ไม้
+วัดบุญเรือง|หย่วน|ถ้อยคำที่เป็นมงคลนาม
+วัดเปื๋อยเปียง|หย่วน|ชื่อหมู่บ้าน
+วัดพระธาตุสบแวน|หย่วน|สิ่งศักดิ์สิทธิ์ + ชื่อหมู่บ้าน
+วัดศรีบุญยืน|หย่วน|ถ้อยคำที่เป็นมงคลนาม
+วัดแสนเมืองมา|หย่วน|เหตุการณ์ทางประวัติศาสตร์
+วัดหย่วน|หย่วน|ชื่อหมู่บ้าน
+วัดใหม่นันทวงษ์|หย่วน|ผู้ที่มีส่วนสำคัญในการสร้างวัด
+วัดจำบอน|อ่างทอง|ชื่อหมู่บ้าน
+วัดดอยอิสาน|อ่างทอง|ชื่อหมู่บ้าน
+วัดนาเจริญ|อ่างทอง|ชื่อหมู่บ้าน
+วัดเนินสามัคคี|อ่างทอง|ชื่อหมู่บ้าน
+วัดปางมดแดง|อ่างทอง|ชื่อหมู่บ้าน
+วัดสันปูเลย|อ่างทอง|ชื่อหมู่บ้าน
+วัดหนองบัวเงิน|อ่างทอง|ชื่อหมู่บ้าน
+วัดหล่ายพัฒนา|อ่างทอง|ชื่อหมู่บ้าน
+วัดกว้าน|เจดีย์คำ|ชื่อหมู่บ้าน
+วัดดอนเรือง|เจดีย์คำ|สภาพภูมิประเทศ + ถ้อยคำที่เป็นมงคล
+วัดบ้านปุ|เจดีย์คำ|ชื่อหมู่บ้าน
+วัดบุญยืน|เจดีย์คำ|ชื่อหมู่บ้าน
+วัดปัวชัย|เจดีย์คำ|ชื่อหมู่บ้าน
+วัดปิน|เจดีย์คำ|ชื่อหมู่บ้าน
+วัดร่องค้อม|เจดีย์คำ|ชื่อหมู่บ้าน
+วัดวังเค็มเก่า|เจดีย์คำ|ชื่อหมู่บ้าน
+วัดวังเค็มใหม่|เจดีย์คำ|ชื่อหมู่บ้าน
+วัดเสาหิน|เจดีย์คำ|โบราณสถานหรือโบราณวัตถุ
+วัดเชียงคาน|เชียงบาน|ชื่อหมู่บ้าน
+วัดเชียงบาน|เชียงบาน|ชื่อหมู่บ้าน
+วัดทองแย้ม|เชียงบาน|ความเชื่อเกี่ยวกับสิ่งศักดิ์สิทธิ์
+วัดทุ่งมอก|เชียงบาน|ชื่อหมู่บ้าน
+วัดปางวัว|เชียงบาน|ชื่อหมู่บ้าน
+วัดป่าทุ่งมอก|เชียงบาน|ชื่อหมู่บ้าน
+วัดแวนวัฒนา|เชียงบาน|ชื่อหมู่บ้าน
+วัดศรีบุญเรือง|เชียงบาน|ถ้อยคำที่เป็นมงคลนาม
+วัดไชยพรม|เวียง|ชื่อหมู่บ้าน
+วัดดอนแก้ว|เวียง|ชื่อหมู่บ้าน
+วัดดอนไชย|เวียง|ชื่อหมู่บ้าน
+วัดทราย|เวียง|ชื่อหมู่บ้าน
+วัดปี้|เวียง|ชื่อหมู่บ้าน
+วัดพระแก้ว|เวียง|เหตุการณ์ทางประวัติศาสตร์
+วัดพระนั่งดิน|เวียง|โบราณสถานหรือโบราณวัตถุ
+วัดล้า|เวียง|ชื่อหมู่บ้าน
+วัดสันคืองาม|เวียง|ชื่อหมู่บ้าน
+วัดกอก|แม่ลาว|ชื่อหมู่บ้าน
+วัดดอนมูล|แม่ลาว|ลักษณะภูมิประเทศ
+วัดทุ่งเย็น|แม่ลาว|ชื่อหมู่บ้าน
+วัดน้ำมิน|แม่ลาว|ชื่อหมู่บ้าน
+วัดบุบผาราม|แม่ลาว|ถ้อยคำที่เป็นมงคลนาม
+วัดผาลาด|แม่ลาว|ชื่อหมู่บ้าน
+วัดวังถ้ำ|แม่ลาว|ชื่อหมู่บ้าน`.trim();
+
+    const chineseNameMap = {
+      "วัดพระธาตุผาฮาว": "帕哈奥佛塔寺",
+      "วัดพระธาตุศรีชุม": "西春佛塔寺",
+      "วัดพระธาตุขุนห้วยสวด": "坤惠苏阿特佛塔寺",
+      "วัดพระธาตุดอยคำ": "多伊甘佛塔寺",
+      "วัดพระธาตุสบแวน": "梭万佛塔寺",
+      "วัดพระแก้ว": "帕考寺",
+      "วัดพระนั่งดิน": "帕囊丁寺",
+      "วัดศรีมงคล": "吉祥寺",
+      "วัดเกษมสันติวนาราม": "安乐和平林苑寺",
+      "วัดบุญเรือง": "福兴寺",
+      "วัดบุบผาราม": "花园寺",
+      "วัดเกษตรสมบูรณ์": "丰收圆满寺",
+      "วัดเนินสามัคคี": "团结山丘寺",
+      "วัดป่าแดงสามัคคี": "红林团结寺"
+    };
+
+    function chineseTempleName(name) {
+      return chineseNameMap[name] || ("清康" + name.replace(/^วัด/, "").replace(/[()]/g, "") + "寺");
+    }
+
+    const baseTemples = rawTemples.split("\n").map((line, index, all) => {
+      const [name_th, subdistrict, naming_strategy_main] = line.split("|");
+      const area = mapAreas[subdistrict];
+      const localIndex = all.slice(0, index).filter(item => item.split("|")[1] === subdistrict).length;
+      const angle = localIndex * 2.399963229728653;
+      const radius = 2.4 + (localIndex % 5) * 1.35;
+      const map_x = Math.max(7, Math.min(93, area[0] + Math.cos(angle) * radius * 1.6));
+      const map_y = Math.max(8, Math.min(91, area[1] + Math.sin(angle) * radius));
+      const history_th = name_th + " จัดอยู่ในกลวิธี “" + naming_strategy_main + "” โดย" + strategyHistories[naming_strategy_main];
+      const history_zh = chineseTempleName(name_th) + " 的名称分类为“" + strategyChinese[naming_strategy_main] + "”。" + strategyChinese[naming_strategy_main] + "反映当地社区、地理环境与信仰记忆之间的联系。";
+
+      return {
+        temple_id: index + 1,
+        name_th,
+        name_zh: chineseTempleName(name_th),
+        subdistrict,
+        naming_strategy_main,
+        naming_strategy_sub: "",
+        translation_method: "音译与意译结合",
+        history_th,
+        history_zh,
+        map_x: Number(map_x.toFixed(1)),
+        map_y: Number(map_y.toFixed(1)),
+        google_maps_url: "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(name_th + " ตำบล" + subdistrict + " อำเภอเชียงคำ จังหวัดพะเยา")
+      };
+    });
+
+    let sheetTemples = [];
+    let currentRecords = [];
+    let selectedTempleId = null;
+    let filters = { search: "", subdistrict: "", strategy: "" };
+
+    function normalizeRecord(item) {
+      return {
+        ...item,
+        temple_id: Number(item.temple_id),
+        map_x: Number(item.map_x),
+        map_y: Number(item.map_y),
+        latitude: item.latitude === null || item.latitude === "" || item.latitude === undefined ? null : Number(item.latitude),
+        longitude: item.longitude === null || item.longitude === "" || item.longitude === undefined ? null : Number(item.longitude)
+      };
+    }
+
+    function mergedTemples() {
+      const overrides = new Map(sheetTemples.map(item => [Number(item.temple_id), item]));
+      const merged = baseTemples.map(item => overrides.get(item.temple_id) || item);
+      const additions = sheetTemples.filter(item => !baseTemples.some(base => base.temple_id === Number(item.temple_id)));
+      return [...merged, ...additions].sort((a, b) => Number(a.temple_id) - Number(b.temple_id));
+    }
+
+    function filteredTemples() {
+      const query = filters.search.trim().toLowerCase();
+      return mergedTemples().filter(item => {
+        const searchable = [item.name_th, item.name_zh, item.subdistrict, item.naming_strategy_main].join(" ").toLowerCase();
+        return (!query || searchable.includes(query)) &&
+          (!filters.subdistrict || item.subdistrict === filters.subdistrict) &&
+          (!filters.strategy || item.naming_strategy_main === filters.strategy);
+      });
+    }
+
+    function findTemple(id) {
+      return mergedTemples().find(item => Number(item.temple_id) === Number(id));
+    }
+
+    function fillSelect(select, values, emptyLabel) {
+      select.innerHTML = "";
+      if (emptyLabel !== null) {
+        const option = document.createElement("option");
+        option.value = "";
+        option.textContent = emptyLabel;
+        select.appendChild(option);
+      }
+      values.forEach(value => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option);
+      });
+    }
+
+    function setupSelects() {
+      const filter = document.getElementById("subdistrict-filter");
+      const strategy = document.getElementById("strategy-filter");
+      if (filter) {
+        fillSelect(filter, subdistricts, "ทุกตำบล");
+      }
+      if (strategy) {
+        fillSelect(strategy, strategyOrder, "ทุกกลวิธี");
+      }
+    }
+
+    function renderTotals() {
+      const temples = mergedTemples();
+      document.getElementById("temple-total").textContent = temples.length;
+      document.getElementById("strategy-total").textContent = new Set(temples.map(item => item.naming_strategy_main)).size;
+    }
+
+    function renderStrategySummary() {
+      const holder = document.getElementById("strategy-summary");
+      const records = filteredTemples();
+      const all = mergedTemples();
+      holder.innerHTML = "";
+
+      strategyOrder.forEach(strategy => {
+        const count = records.filter(item => item.naming_strategy_main === strategy).length;
+        const total = all.filter(item => item.naming_strategy_main === strategy).length;
+        if (!total) return;
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "strategy-card flex items-center justify-between gap-4 rounded-xl border px-4 py-3 text-left focus:outline-none focus:ring-4 focus:ring-amber-200";
+        const active = filters.strategy === strategy;
+        button.style.background = active ? "#dff0ce" : "#f8fbf4";
+        button.style.borderColor = active ? "#6f9e48" : "#dbe7d2";
+        button.innerHTML = `
+          <span class="min-w-0 truncate text-sm font-bold text-emerald-950">${strategy}</span>
+          <span class="shrink-0 rounded-full bg-white px-2.5 py-1 text-xs font-extrabold text-emerald-800">${count} วัด</span>
+        `;
+        button.addEventListener("click", () => {
+          filters.strategy = filters.strategy === strategy ? "" : strategy;
+          document.getElementById("strategy-filter").value = filters.strategy;
+          renderAll();
+        });
+        holder.appendChild(button);
+      });
+
+      document.getElementById("strategy-filter-status").textContent = filters.strategy
+        ? "กำลังดู: " + filters.strategy
+        : "ภาพรวม " + all.length + " วัด";
+    }
+
+    function renderDistrictChart() {
+      const chart = document.getElementById("subdistrict-chart");
+      const labels = document.getElementById("subdistrict-labels");
+      chart.innerHTML = "";
+      labels.innerHTML = "";
+
+      const shown = filteredTemples();
+      const counts = subdistricts.map(subdistrict => ({
+        subdistrict,
+        count: shown.filter(item => item.subdistrict === subdistrict).length
+      }));
+      const total = shown.length || 1;
+      const max = Math.max(...counts.map(item => item.count), 1);
+
+      chart.classList.add("relative", "gap-2");
+      [25, 50, 75, 100].forEach(level => {
+        const guide = document.createElement("span");
+        guide.className = "pointer-events-none absolute left-0 right-0 border-t border-dashed border-emerald-900/10";
+        guide.style.bottom = level + "%";
+        chart.appendChild(guide);
+      });
+
+      counts.forEach(item => {
+        const column = document.createElement("div");
+        column.className = "relative z-10 flex h-full flex-1 items-end";
+
+        const number = document.createElement("span");
+        number.className = "pointer-events-none absolute -top-6 w-full text-center text-[11px] font-extrabold text-emerald-950";
+        number.textContent = item.count;
+
+        const bar = document.createElement("button");
+        bar.type = "button";
+        bar.className = "district-bar w-full rounded-t-lg bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-amber-400";
+        bar.style.height = Math.max(9, (item.count / max) * 100) + "%";
+        const share = Math.round((item.count / total) * 100);
+        bar.setAttribute("aria-label", "กรองตำบล" + item.subdistrict + " มี " + item.count + " วัด คิดเป็น " + share + " เปอร์เซ็นต์");
+        bar.title = "ตำบล" + item.subdistrict + ": " + item.count + " วัด (" + share + "%)";
+        bar.addEventListener("click", () => {
+          filters.subdistrict = filters.subdistrict === item.subdistrict ? "" : item.subdistrict;
+          document.getElementById("subdistrict-filter").value = filters.subdistrict;
+          renderAll();
+        });
+
+        column.append(number, bar);
+        chart.appendChild(column);
+
+        const label = document.createElement("button");
+        label.type = "button";
+        label.className = "flex-1 text-center text-[10px] font-semibold leading-3 text-stone-500 focus:outline-none focus:text-emerald-800";
+        label.innerHTML = item.subdistrict + '<span class="mt-1 block text-[9px] font-normal text-stone-400">' + share + "%" + '</span>';
+        label.addEventListener("click", () => {
+          filters.subdistrict = filters.subdistrict === item.subdistrict ? "" : item.subdistrict;
+          document.getElementById("subdistrict-filter").value = filters.subdistrict;
+          renderAll();
+        });
+        labels.appendChild(label);
+      });
+    }
+
+    function renderList() {
+      const list = document.getElementById("temple-list");
+      const shown = filteredTemples();
+      const existing = new Map([...list.children].map(element => [element.dataset.templeId, element]));
+
+      shown.forEach(item => {
+        const id = String(item.temple_id);
+        let row = existing.get(id);
+
+        if (!row) {
+          const fragment = document.getElementById("temple-row-template").content.cloneNode(true);
+          row = fragment.querySelector("button");
+          row.dataset.templeId = id;
+          row.addEventListener("click", () => openTempleDialog(Number(row.dataset.templeId)));
+          list.appendChild(row);
+        }
+
+        row.querySelector(".temple-name").textContent = item.name_th;
+        row.querySelector(".temple-zh").textContent = item.name_zh;
+        row.querySelector(".temple-subdistrict").textContent = "ต." + item.subdistrict;
+        row.querySelector(".temple-strategy").textContent = item.naming_strategy_main;
+        existing.delete(id);
+      });
+
+      existing.forEach(element => element.remove());
+      document.getElementById("visible-count").textContent = "แสดง " + shown.length + " วัด";
+    }
+
+    let realMap = null;
+    let realMarkers = new Map();
+
+    // ตำแหน่งชั่วคราวระดับตำบล: ใช้สำหรับแสดงแผนที่จริงก่อนมีพิกัดรายวัด
+    const subdistrictCenters = {
+      "ทุ่งผาสุข": [19.50, 100.38],
+      "น้ำแวน": [19.48, 100.47],
+      "ฝายกวาง": [19.48, 100.52],
+      "ร่มเย็น": [19.43, 100.42],
+      "หย่วน": [19.36, 100.45],
+      "อ่างทอง": [19.32, 100.51],
+      "เจดีย์คำ": [19.34, 100.43],
+      "เชียงบาน": [19.38, 100.50],
+      "เวียง": [19.40, 100.46],
+      "แม่ลาว": [19.45, 100.57]
+    };
+
+    function ensureRealMap() {
+      if (realMap) return;
+      realMap = L.map('real-map', { zoomControl: true }).setView([19.42, 100.48], 11);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(realMap);
+    }
+
+    function openGoogleMaps(item) {
+      const url = item.google_maps_url || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(item.name_th + ' ตำบล' + item.subdistrict + ' อำเภอเชียงคำ จังหวัดพะเยา'));
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+
+    function renderPins() {
+      ensureRealMap();
+      const shown = filteredTemples();
+      const visibleIds = new Set(shown.map(item => String(item.temple_id)));
+
+      realMarkers.forEach((marker, id) => {
+        if (!visibleIds.has(id)) {
+          realMap.removeLayer(marker);
+          realMarkers.delete(id);
+        }
+      });
+
+      shown.forEach(item => {
+        const id = String(item.temple_id);
+        let coords;
+        if (item.latitude && item.longitude) {
+          coords = [Number(item.latitude), Number(item.longitude)];
+        } else {
+          const center = subdistrictCenters[item.subdistrict];
+          if (!center) return;
+          // กระจายหมุดชั่วคราวรอบศูนย์กลางตำบล เพื่อไม่ให้หมุดทั้งตำบลซ้อนกัน
+          const sameDistrict = mergedTemples().filter(t => t.subdistrict === item.subdistrict);
+          const localIndex = sameDistrict.findIndex(t => Number(t.temple_id) === Number(item.temple_id));
+          const angle = localIndex * 2.399963229728653;
+          const radius = 0.006 + (localIndex % 6) * 0.0025;
+          coords = [center[0] + Math.sin(angle) * radius, center[1] + Math.cos(angle) * radius * 1.25];
+        }
+
+        const googleUrl = item.google_maps_url || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(item.name_th + ' ตำบล' + item.subdistrict + ' อำเภอเชียงคำ จังหวัดพะเยา'));
+        const popup = `
+          <div class="temple-popup-title">${escapeHtml(item.name_th)}</div>
+          <div class="temple-popup-zh">${escapeHtml(item.name_zh || '')} · ตำบล${escapeHtml(item.subdistrict || '')}</div>
+          <div style="font-size:12px;line-height:1.55;margin-bottom:6px;">${escapeHtml((item.history_th || 'ยังไม่มีประวัติ').slice(0,180))}${(item.history_th || '').length > 180 ? '…' : ''}</div>
+          <button type="button" class="temple-popup-btn" onclick="openTempleDialog(${Number(item.temple_id)})">ดูประวัติเต็ม</button>
+          <a class="temple-popup-btn temple-popup-map" href="${googleUrl}" target="_blank" rel="noopener noreferrer">เปิด Google Maps</a>`;
+
+        let marker = realMarkers.get(id);
+        if (!marker) {
+          marker = L.marker(coords).addTo(realMap);
+          realMarkers.set(id, marker);
+        } else {
+          marker.setLatLng(coords);
+        }
+        marker.bindPopup(popup);
+        marker.setZIndexOffset(Number(item.temple_id) === selectedTempleId ? 1000 : 0);
+      });
+
+      document.getElementById("map-badge").textContent = shown.length + " หมุด";
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+    }
+
+    function renderAll() {
+      renderTotals();
+      renderStrategySummary();
+      renderDistrictChart();
+      renderList();
+      renderPins();
+    }
+
+    function openTempleDialog(id) {
+      if (realMap) realMap.closePopup();
+      const item = findTemple(id);
+      if (!item) return;
+
+      selectedTempleId = Number(id);
+      document.getElementById("dialog-temple-name").textContent = item.name_th;
+      document.getElementById("dialog-temple-zh").textContent = item.name_zh || "";
+      document.getElementById("dialog-subdistrict").textContent = "ตำบล" + item.subdistrict;
+      document.getElementById("dialog-strategy-display").textContent = item.naming_strategy_main;
+      document.getElementById("dialog-name-zh-display").textContent = item.name_zh || "-";
+      document.getElementById("dialog-strategy-readonly").textContent = item.naming_strategy_main || "-";
+      document.getElementById("dialog-history-th-display").textContent = item.history_th || "-";
+      document.getElementById("dialog-history-zh-display").textContent = item.history_zh || "-";
+      document.getElementById("dialog-maps-link").href = item.google_maps_url || "#";
+      document.getElementById("dialog-name-zh").value = item.name_zh || "";
+      document.getElementById("dialog-strategy-select").value = item.naming_strategy_main || "";
+      document.getElementById("dialog-history-th").value = item.history_th || "";
+      document.getElementById("dialog-history-zh").value = item.history_zh || "";
+      document.getElementById("dialog-map-link").value = item.google_maps_url || "";
+      document.getElementById("dialog-image-url").value = item.image_url || "";
+      const photoWrap = document.getElementById("dialog-photo-wrap"), photo = document.getElementById("dialog-photo");
+      if (item.image_url) { photo.src = item.image_url; photoWrap.classList.remove("hidden"); } else { photo.removeAttribute("src"); photoWrap.classList.add("hidden"); }
+      const imageStatus = document.getElementById("dialog-image-status"); if (imageStatus) imageStatus.textContent = item.image_url ? "มีรูปประจำวัดแล้ว — เลือกรูปใหม่เพื่อเปลี่ยนรูป" : "ยังไม่มีรูป — กด “เพิ่มรูปจากเครื่อง” ได้เลย";
+      document.getElementById("dialog-latitude").value = item.latitude ?? "";
+      document.getElementById("dialog-longitude").value = item.longitude ?? "";
+      document.getElementById("dialog-edit-form").classList.add("hidden");
+      document.getElementById("temple-dialog").classList.remove("hidden");
+      document.getElementById("temple-dialog").classList.add("flex");
+      renderPins();
+    }
+
+    function closeDialog() {
+      if (realMap) realMap.closePopup();
+      document.getElementById("temple-dialog").classList.add("hidden");
+      document.getElementById("temple-dialog").classList.remove("flex");
+      selectedTempleId = null;
+      renderPins();
+    }
+
+    const dataHandler = {
+      onDataChanged(data) {
+        currentRecords = data.map(normalizeRecord);
+        sheetTemples = currentRecords;
+        renderAll();
+      }
+    };
+
+    // ==============================
+    // DATA LAYER: Firebase Firestore + fallback
+    // ==============================
+    const firebaseConfig = {
+      apiKey: "AIzaSyCroWyaI2fCVf1uZFUrU3ItAzQ1Kw24umg",
+      authDomain: "chiang-kham-temple.firebaseapp.com",
+      projectId: "chiang-kham-temple",
+      storageBucket: "chiang-kham-temple.firebasestorage.app",
+      messagingSenderId: "1067622674721",
+      appId: "1:1067622674721:web:a3d6ea0cce960a1fd80e60"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const firebaseAuth = firebase.auth();
+    const firestoreDb = firebase.firestore();
+    const FIREBASE_COLLECTION = "temples";
+    const FIREBASE_ADMIN_UIDS = new Set([
+      "DXuvXlvTYMM3JfmEZ6nsQGmpcpu2",
+      "8U77TAoIE0fV8UrLoi8wicvNkDF3",
+      "loo7K49oEgbMfPTL6qXjS9es3VG2",
+      "qHoD5Rorj8Zjp5h66GWU68oQJmG3"
+    ]);
+    let firebaseReady = true;
+
+    function localRows() {
+      try { return JSON.parse(localStorage.getItem("chiangkham-temples-v2") || "[]").map(normalizeRecord); }
+      catch(e) { return []; }
+    }
+
+    function isDeveloperUser(user) {
+      return !!user && FIREBASE_ADMIN_UIDS.has(user.uid);
+    }
+
+    async function loadRemoteRecords() {
+      if (!firebaseReady) return localRows();
+      const snapshot = await firestoreDb.collection(FIREBASE_COLLECTION).orderBy("temple_id", "asc").get();
+      return snapshot.docs.map(doc => normalizeRecord(doc.data()));
+    }
+
+    async function initData() {
+      try {
+        const remote = await loadRemoteRecords();
+        if (remote.length) {
+          sheetTemples = remote;
+        } else {
+          sheetTemples = baseTemples.map(normalizeRecord);
+        }
+        currentRecords = sheetTemples;
+        renderAll();
+        return { isOk: true, remote: remote.length > 0 };
+      } catch (e) {
+        console.error("โหลดฐานข้อมูล Firebase ไม่สำเร็จ", e);
+        sheetTemples = baseTemples.map(normalizeRecord);
+        currentRecords = sheetTemples;
+        renderAll();
+        const status = document.getElementById("save-status");
+        if (status) status.textContent = "เชื่อม Firebase ไม่สำเร็จ จึงแสดงข้อมูลตั้งต้น";
+        return { isOk: false, error: e };
+      }
+    }
+
+    async function upsertRecord(record) {
+      if (!firebaseReady) throw new Error("Firebase ยังไม่พร้อมใช้งาน");
+      const clean = normalizeRecord(record);
+      await firestoreDb.collection(FIREBASE_COLLECTION).doc(String(clean.temple_id)).set(clean, { merge: true });
+      return clean;
+    }
+
+    async function seedBaseDataIfEmpty() {
+      if (!firebaseReady) return false;
+      const user = firebaseAuth.currentUser;
+      if (!isDeveloperUser(user)) return false;
+      const snapshot = await firestoreDb.collection(FIREBASE_COLLECTION).limit(1).get();
+      if (!snapshot.empty) return false;
+
+      const batchSize = 400;
+      let batch = firestoreDb.batch();
+      let count = 0;
+      for (const row of baseTemples.map(normalizeRecord)) {
+        const ref = firestoreDb.collection(FIREBASE_COLLECTION).doc(String(row.temple_id));
+        batch.set(ref, row, { merge: true });
+        count++;
+        if (count >= batchSize) {
+          await batch.commit();
+          batch = firestoreDb.batch();
+          count = 0;
+        }
+      }
+      if (count) await batch.commit();
+      return true;
+    }
+
+    async function refresh() {
+      try {
+        const remote = await loadRemoteRecords();
+        sheetTemples = remote.length ? remote : baseTemples.map(normalizeRecord);
+        currentRecords = sheetTemples;
+        renderAll();
+      } catch (e) {
+        console.error(e);
+        const status = document.getElementById("save-status");
+        if (status) status.textContent = "โหลดฐานข้อมูลไม่สำเร็จ: " + (e.message || e);
+      }
+    }
+
+    async function compressImageFile(file) {
+      if (!file || !file.type.startsWith("image/")) throw new Error("กรุณาเลือกไฟล์รูปภาพ");
+      const dataUrl = await new Promise((resolve, reject) => { const r = new FileReader(); r.onload=()=>resolve(r.result); r.onerror=()=>reject(new Error("อ่านรูปไม่สำเร็จ")); r.readAsDataURL(file); });
+      const img = await new Promise((resolve,reject)=>{ const i=new Image(); i.onload=()=>resolve(i); i.onerror=()=>reject(new Error("เปิดรูปไม่สำเร็จ")); i.src=dataUrl; });
+      const maxSide=1400, scale=Math.min(1,maxSide/Math.max(img.width,img.height));
+      const canvas=document.createElement("canvas"); canvas.width=Math.max(1,Math.round(img.width*scale)); canvas.height=Math.max(1,Math.round(img.height*scale));
+      canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
+      return canvas.toDataURL("image/jpeg",0.78);
+    }
+
+    async function saveDialog(event) {
+      event.preventDefault();
+      if (!document.body.classList.contains("admin-mode") || !isDeveloperUser(firebaseAuth.currentUser)) return;
+      const item = findTemple(selectedTempleId);
+      if (!item) return;
+      const button = document.getElementById("dialog-save-button");
+      const status = document.getElementById("dialog-save-status");
+      button.disabled = true; button.classList.add("opacity-60", "cursor-wait"); status.textContent = "กำลังบันทึก...";
+      try {
+        const mapLink = document.getElementById("dialog-map-link").value.trim() || ("https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(item.name_th + " ตำบล" + item.subdistrict + " อำเภอเชียงคำ จังหวัดพะเยา"));
+        const record = { ...item,
+          name_zh: document.getElementById("dialog-name-zh").value.trim(),
+          naming_strategy_main: document.getElementById("dialog-strategy-select").value,
+          history_th: document.getElementById("dialog-history-th").value.trim(),
+          history_zh: document.getElementById("dialog-history-zh").value.trim(),
+          latitude: Number(document.getElementById("dialog-latitude").value) || null,
+          longitude: Number(document.getElementById("dialog-longitude").value) || null,
+          google_maps_url: mapLink,
+          image_url: document.getElementById("dialog-image-url").value.trim()
+        };
+        await upsertRecord(record);
+        await refresh();
+        status.textContent = "บันทึกข้อมูลออนไลน์แล้ว ✓";
+      } catch (e) { console.error(e); status.textContent = "บันทึกไม่สำเร็จ: " + (e.message || e); }
+      finally { button.disabled = false; button.classList.remove("opacity-60", "cursor-wait"); }
+    }
+
+    async function addTemple(event) {
+      event.preventDefault();
+      const button = document.getElementById("save-temple-button"), status = document.getElementById("save-status");
+      if (!document.body.classList.contains("admin-mode") || !isDeveloperUser(firebaseAuth.currentUser)) return;
+      const nameTh = document.getElementById("add-name-th").value.trim(), subdistrict = document.getElementById("add-subdistrict").value, strategy = document.getElementById("add-strategy").value;
+      if (!nameTh || !subdistrict || !strategy) { status.textContent = "กรุณากรอกชื่อวัด ตำบล และกลวิธี"; return; }
+      button.disabled = true;
+      try {
+        const all = mergedTemples(), nextId = Math.max(0, ...all.map(item => Number(item.temple_id) || 0)) + 1, area = mapAreas[subdistrict] || [50,50];
+        const record = { temple_id: nextId, name_th: nameTh, name_zh: document.getElementById("add-name-zh").value.trim() || chineseTempleName(nameTh), village:"", subdistrict, naming_strategy_main:strategy, naming_strategy_sub:"", translation_method:"ทับศัพท์/ถอดเสียง", history_th:document.getElementById("add-history").value.trim(), history_zh:"", village_history_th:"", temple_village_relationship:"", latitude:Number(document.getElementById("add-latitude").value)||null, longitude:Number(document.getElementById("add-longitude").value)||null, map_x:area[0], map_y:area[1], google_maps_url:document.getElementById("add-map-link").value.trim() || ("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(nameTh+" ตำบล"+subdistrict+" อำเภอเชียงคำ จังหวัดพะเยา")), image_url:"", sources:"", interviewee:"", interview_date:"", notes:"" };
+        await upsertRecord(record); await refresh();
+        ["add-name-th","add-name-zh","add-map-link","add-latitude","add-longitude","add-history"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
+        status.textContent = "เพิ่มวัดลงฐานข้อมูลออนไลน์แล้ว ✓";
+      } catch(e) { console.error(e); status.textContent = "เพิ่มวัดไม่สำเร็จ: " + (e.message || e); }
+      finally { button.disabled = false; }
+    }
+
+    async function exportJSON() {
+      try { const rows=mergedTemples(), blob=new Blob([JSON.stringify(rows,null,2)],{type:"application/json;charset=utf-8"}), url=URL.createObjectURL(blob), a=document.createElement("a"); a.href=url; a.download="chiangkham-temples-backup.json"; a.click(); URL.revokeObjectURL(url); document.getElementById("save-status").textContent="ส่งออกข้อมูลสำรองแล้ว ✓"; } catch(e) { document.getElementById("save-status").textContent="ส่งออกไม่สำเร็จ"; }
+    }
+    async function importJSON(file) {
+      if(!file || !document.body.classList.contains("admin-mode") || !isDeveloperUser(firebaseAuth.currentUser)) return;
+      try { const rows=JSON.parse(await file.text()); if(!Array.isArray(rows))throw new Error("ไฟล์ต้องเป็น JSON array"); for(const row of rows) await upsertRecord(row); await refresh(); document.getElementById("save-status").textContent="นำเข้าข้อมูลแล้ว ✓"; } catch(e) { document.getElementById("save-status").textContent="นำเข้าไม่สำเร็จ: "+(e.message||e); }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      setupSelects();
+      lucide.createIcons();
+      renderAll();
+      initData();
+
+      document.getElementById("search-input").addEventListener("input", event => {
+        filters.search = event.target.value;
+        renderAll();
+      });
+
+      document.getElementById("subdistrict-filter").addEventListener("change", event => {
+        filters.subdistrict = event.target.value;
+        renderAll();
+      });
+
+      document.getElementById("strategy-filter").addEventListener("change", event => {
+        filters.strategy = event.target.value;
+        renderAll();
+      });
+
+      document.getElementById("clear-filters").addEventListener("click", () => {
+        filters = { search: "", subdistrict: "", strategy: "" };
+        document.getElementById("search-input").value = "";
+        document.getElementById("subdistrict-filter").value = "";
+        document.getElementById("strategy-filter").value = "";
+        renderAll();
+      });
+
+      fillSelect(document.getElementById("dialog-strategy-select"), strategyOrder, null);
+      document.getElementById("dialog-edit-button").addEventListener("click", () => {
+        const form = document.getElementById("dialog-edit-form");
+        form.classList.remove("hidden");
+        document.getElementById("dialog-name-zh").focus();
+        form.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      });
+      document.getElementById("dialog-image-file")?.addEventListener("change", async (event) => {
+        const file=event.target.files?.[0]; if(!file) return;
+        const status=document.getElementById("dialog-image-status"); status.textContent="กำลังเตรียมรูป...";
+        try {
+          const data=await compressImageFile(file);
+          document.getElementById("dialog-image-url").value=data;
+          const photo=document.getElementById("dialog-photo"), wrap=document.getElementById("dialog-photo-wrap"); photo.src=data; wrap.classList.remove("hidden");
+          status.textContent="เลือกรูปแล้ว ✓ กด “บันทึกการแก้ไข” เพื่อบันทึก";
+        } catch(e) { status.textContent="เพิ่มรูปไม่สำเร็จ: "+(e.message||e); }
+      });
+      document.getElementById("dialog-remove-image")?.addEventListener("click",()=>{
+        document.getElementById("dialog-image-url").value=""; document.getElementById("dialog-photo").removeAttribute("src"); document.getElementById("dialog-photo-wrap").classList.add("hidden"); document.getElementById("dialog-image-status").textContent="ลบรูปแล้ว — กด “บันทึกการแก้ไข” เพื่อยืนยัน";
+      });
+      document.getElementById("dialog-edit-form").addEventListener("submit", saveDialog);
+      document.getElementById("save-temple-button").addEventListener("click", addTemple);
+      document.getElementById("dialog-close").addEventListener("click", closeDialog);
+      document.getElementById("temple-dialog").addEventListener("click", event => {
+        if (event.target === document.getElementById("temple-dialog")) closeDialog();
+      });
+
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && !document.getElementById("temple-dialog").classList.contains("hidden")) {
+          closeDialog();
+        }
+      });
+
+
+    });
+  </script>
+<script>
+(function(){
+  function openLogin(){const e=document.getElementById("admin-login");if(!e)return;e.classList.remove("hidden");e.classList.add("flex");document.getElementById("admin-email")?.focus();}
+  function closeLogin(){const e=document.getElementById("admin-login");if(!e)return;e.classList.add("hidden");e.classList.remove("flex");}
+  function setAdmin(on){document.body.classList.toggle("admin-mode",on);const p=document.getElementById("admin-panel"),b=document.getElementById("developer-button");if(p)p.classList.toggle("hidden",!on);if(b)b.textContent=on?"🛠 โหมดผู้พัฒนา":"🔐 ผู้พัฒนา";if(!on)closeLogin();}
+  async function login(){
+    const email=document.getElementById("admin-email"),pass=document.getElementById("admin-password"),status=document.getElementById("admin-login-status");
+    if(!email.value.trim()||!pass.value){status.textContent="กรุณากรอกอีเมลและรหัสผ่าน";return;}
+    status.textContent="กำลังเข้าสู่ระบบ...";
+    try {
+      const cred=await firebaseAuth.signInWithEmailAndPassword(email.value.trim(),pass.value);
+      if(!isDeveloperUser(cred.user)){await firebaseAuth.signOut();status.textContent="บัญชีนี้ไม่มีสิทธิ์ผู้พัฒนา";return;}
+      setAdmin(true);closeLogin();pass.value="";
+      const seeded=await seedBaseDataIfEmpty();
+      await refresh();
+      const saveStatus=document.getElementById("save-status");
+      if(saveStatus) saveStatus.textContent=seeded?"เชื่อม Firebase แล้ว และเพิ่มข้อมูลตั้งต้น 95 วัดเรียบร้อย ✓":"เชื่อม Firebase แล้ว ✓";
+    } catch(error){
+      console.error(error);
+      status.textContent="เข้าสู่ระบบไม่สำเร็จ: "+(error.message||error);
+    }
+  }
+  document.addEventListener("DOMContentLoaded",function(){
+    const d=document.getElementById("developer-button"),s=document.getElementById("admin-login-submit"),c=document.getElementById("admin-login-close"),p=document.getElementById("admin-password"),l=document.getElementById("admin-logout");
+    d?.addEventListener("click",async()=>{if(document.body.classList.contains("admin-mode")){await firebaseAuth.signOut();setAdmin(false);}else openLogin();});
+    c?.addEventListener("click",closeLogin); s?.addEventListener("click",login); p?.addEventListener("keydown",e=>{if(e.key==="Enter")login();});
+    l?.addEventListener("click",async()=>{await firebaseAuth.signOut();setAdmin(false);});
+    document.getElementById("export-data")?.addEventListener("click",exportJSON);
+    document.getElementById("import-data")?.addEventListener("change",e=>importJSON(e.target.files?.[0]));
+    firebaseAuth.onAuthStateChanged(async user=>{
+      if(!user){setAdmin(false);return;}
+      if(!isDeveloperUser(user)){await firebaseAuth.signOut();setAdmin(false);return;}
+      setAdmin(true);
+      try { await seedBaseDataIfEmpty(); await refresh(); } catch(e){ console.error(e); }
+    });
+  });
+})();
+</script>
+</body></html>
