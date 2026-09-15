@@ -941,38 +941,40 @@
       return true;
     }
 
- async function refresh() {
+    async function refresh() {
   const status = document.getElementById("save-status");
-  const container = document.getElementById("content-container"); // ใส่ ID ของโซนแสดงผลข้อมูลคุณ
-
+  
   try {
-    if (status) status.textContent = "กำลังโหลดข้อมูลใหม่ล่าสุด...";
+    if (status) status.textContent = "กำลังโหลด...";
     
-    // เคลียร์ข้อมูลเก่าออกจากหน้าจอทันที
-    if (container) container.innerHTML = ""; 
-    
-    // ดึงข้อมูล
     const remote = await loadRemoteRecords();
     
-    // ตรวจสอบว่าดึง Remote ได้จริงหรือไม่
-    console.log("Remote Data Received:", remote);
+    // Debug ดูค่าจริงที่ส่งกลับมา
+    console.log("Remote response:", remote);
 
-    if (remote && remote.length > 0) {
-      sheetTemples = remote;
+    // ตรวจสอบโครงสร้างข้อมูลให้ครอบคลุม
+    let freshData = null;
+    if (Array.isArray(remote) && remote.length > 0) {
+      freshData = remote;
+    } else if (remote && Array.isArray(remote.data) && remote.data.length > 0) {
+      freshData = remote.data; // กรณี API ครอบด้วย { data: [...] }
+    }
+
+    if (freshData) {
+      sheetTemples = freshData;
+      console.log("ใช้ข้อมูลใหม่จาก Remote");
     } else {
-      console.warn("Remote empty, falling back to baseTemples");
+      console.warn("ไม่พบข้อมูลใหม่ ใช้ baseTemples สำรอง");
       sheetTemples = baseTemples.map(normalizeRecord);
     }
 
     currentRecords = sheetTemples;
-
-    // แสดงผลข้อมูลใหม่
     renderAll();
-    if (status) status.textContent = "อัปเดตข้อมูลสำเร็จ";
-
+    
+    if (status) status.textContent = "อัปเดตเรียบร้อย";
   } catch (e) {
-    console.error("Refresh Error:", e);
-    if (status) status.textContent = "โหลดข้อมูลไม่สำเร็จ: " + (e.message || e);
+    console.error(e);
+    if (status) status.textContent = "เกิดข้อผิดพลาด: " + (e.message || e);
   }
 }
 
