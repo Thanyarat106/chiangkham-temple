@@ -10,7 +10,6 @@
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
   
-  
   <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800&amp;family=Playfair+Display:wght@700&amp;display=swap" rel="stylesheet">
   <style>
     :root {
@@ -29,19 +28,6 @@
       margin: 0;
       color: var(--ink);
       font-family: "Libre Franklin", sans-serif;
-    }
-
-    /* Skeleton Loading CSS */
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
-
-    .skeleton {
-      background: linear-gradient(90deg, #e0e7e1 25%, #f2f7f3 50%, #e0e7e1 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-      border-radius: 0.5rem;
     }
 
     .app-shell {
@@ -68,7 +54,6 @@
       border-radius: 22px;
       background: #d9edc6;
       box-shadow: inset 0 0 0 1px rgba(54, 101, 74, .16);
-      position: relative;
     }
 
     .map-canvas {
@@ -201,7 +186,7 @@
 .leaflet-popup-content { font-family: inherit; }
 .temple-popup-title { font-weight:800; font-size:15px; margin-bottom:4px; }
 .temple-popup-zh { color:#557064; font-size:12px; margin-bottom:8px; }
-.temple-popup-btn { display:inline-block; margin-top:4px; padding:7px 10px; border-radius:9px; background:#356b3b; color:#fff !important; text-decoration:none; font-weight:700; font-size:12px; }
+.temple-popup-btn { display:inline-block; margin-top:4px; padding:7px 10px; border-radius:99px; background:#356b3b; color:#fff !important; text-decoration:none; font-weight:700; font-size:12px; }
 .temple-popup-map { background:#d88f2c; margin-left:5px; }
 </style>
 <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
@@ -393,7 +378,6 @@
         </div>
         <div><label class="mb-1 block text-sm font-bold" for="dialog-latitude">พิกัด Latitude</label><input id="dialog-latitude" type="number" step="any" class="w-full rounded-xl border border-emerald-900/15 bg-white px-3 py-2"></div>
         <div><label class="mb-1 block text-sm font-bold" for="dialog-longitude">พิกัด Longitude</label><input id="dialog-longitude" type="number" step="any" class="w-full rounded-xl border border-emerald-900/15 bg-white px-3 py-2"></div>
-        </div>
        </div>
        <div class="mt-4 flex items-center gap-3"><button id="dialog-save-button" data-template-id="dialog-save-button" type="submit" class="canva-button rounded-xl px-4 py-2 text-sm font-bold" style="background: rgb(216, 143, 44); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;">บันทึกการแก้ไข</button><span id="dialog-save-status" class="text-sm font-semibold"></span>
        </div>
@@ -455,7 +439,7 @@
       "ชื่อพันธุ์ไม้": "以植物名称命名",
       "ความเชื่อเกี่ยวกับสิ่งศักดิ์สิทธิ์": "以神圣信仰命名",
       "ถ้อยคำที่เป็นมงคลนาม": "以吉祥词汇命名",
-      "โบราณสถานหรือโบราณวัตถุ": "以古迹或文物命名",
+      "โบราณสถานหรือโบราณวัตถุ": "以古迹หรือ文物命名",
       "เหตุการณ์ทางประวัติศาสตร์": "以历史事件命名",
       "ผู้ที่มีส่วนสำคัญในการสร้างวัด": "以建寺重要人物命名",
       "สิ่งศักดิ์สิทธิ์ + ชื่อหมู่บ้าน": "神圣信仰与村名组合命名",
@@ -629,63 +613,6 @@
     let selectedTempleId = null;
     let filters = { search: "", subdistrict: "", strategy: "" };
 
-    // --- Helper Functions สำหรับ Skeleton Loading ---
-    function renderListSkeleton() {
-      const list = document.getElementById("temple-list");
-      if (!list) return;
-      list.innerHTML = Array(6).fill(0).map(() => `
-        <div class="flex items-center justify-between gap-3 px-4 py-4 border-b border-emerald-950/10 animate-pulse">
-          <div class="min-w-0 flex-1 space-y-2">
-            <div class="skeleton h-4 w-1/3"></div>
-            <div class="skeleton h-3 w-1/4"></div>
-          </div>
-          <div class="shrink-0 space-y-2 text-right">
-            <div class="skeleton h-3 w-12 ml-auto"></div>
-            <div class="skeleton h-3 w-20 ml-auto"></div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function renderStrategySkeleton() {
-      const holder = document.getElementById("strategy-summary");
-      if (!holder) return;
-      holder.innerHTML = Array(6).fill(0).map(() => `
-        <div class="flex items-center justify-between gap-4 rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 animate-pulse">
-          <div class="skeleton h-4 w-1/2"></div>
-          <div class="skeleton h-5 w-12 rounded-full"></div>
-        </div>
-      `).join('');
-    }
-
-    function toggleMapLoading(isLoading) {
-      const mapBoard = document.querySelector(".map-board");
-      if (!mapBoard) return;
-      let loader = document.getElementById("map-loader");
-      
-      if (isLoading) {
-        if (!loader) {
-          loader = document.createElement("div");
-          loader.id = "map-loader";
-          loader.className = "absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm transition-opacity";
-          loader.innerHTML = `
-            <div class="h-10 w-10 animate-spin rounded-full border-4 border-emerald-200 border-t-emerald-700"></div>
-            <span class="mt-3 text-xs font-bold text-emerald-900">กำลังอัปเดตข้อมูล...</span>
-          `;
-          mapBoard.appendChild(loader);
-        }
-        loader.classList.remove("hidden");
-      } else if (loader) {
-        loader.classList.add("hidden");
-      }
-    }
-
-    function showLoadingState() {
-      renderListSkeleton();
-      renderStrategySkeleton();
-      toggleMapLoading(true);
-    }
-
     function normalizeRecord(item) {
       return {
         ...item,
@@ -719,8 +646,9 @@
     }
 
     function fillSelect(select, values, emptyLabel) {
+      if (!select) return;
       select.innerHTML = "";
-      if (emptyLabel !== null) {
+      if (emptyLabel !== null && emptyLabel !== undefined) {
         const option = document.createElement("option");
         option.value = "";
         option.textContent = emptyLabel;
@@ -735,14 +663,10 @@
     }
 
     function setupSelects() {
-      const filter = document.getElementById("subdistrict-filter");
-      const strategy = document.getElementById("strategy-filter");
-      if (filter) {
-        fillSelect(filter, subdistricts, "ทุกตำบล");
-      }
-      if (strategy) {
-        fillSelect(strategy, strategyOrder, "ทุกกลวิธี");
-      }
+      fillSelect(document.getElementById("subdistrict-filter"), subdistricts, "ทุกตำบล");
+      fillSelect(document.getElementById("strategy-filter"), strategyOrder, "ทุกกลวิธี");
+      fillSelect(document.getElementById("add-subdistrict"), subdistricts, "เลือกตำบล");
+      fillSelect(document.getElementById("add-strategy"), strategyOrder, "เลือกกลวิธี");
     }
 
     function renderTotals() {
@@ -846,23 +770,29 @@
 
     function renderList() {
       const list = document.getElementById("temple-list");
-      list.innerHTML = "";
       const shown = filteredTemples();
+      const existing = new Map([...list.children].map(element => [element.dataset.templeId, element]));
 
       shown.forEach(item => {
         const id = String(item.temple_id);
-        const fragment = document.getElementById("temple-row-template").content.cloneNode(true);
-        const row = fragment.querySelector("button");
-        row.dataset.templeId = id;
-        row.addEventListener("click", () => openTempleDialog(Number(row.dataset.templeId)));
+        let row = existing.get(id);
+
+        if (!row) {
+          const fragment = document.getElementById("temple-row-template").content.cloneNode(true);
+          row = fragment.querySelector("button");
+          row.dataset.templeId = id;
+          row.addEventListener("click", () => openTempleDialog(Number(row.dataset.templeId)));
+          list.appendChild(row);
+        }
 
         row.querySelector(".temple-name").textContent = item.name_th;
         row.querySelector(".temple-zh").textContent = item.name_zh;
         row.querySelector(".temple-subdistrict").textContent = "ต." + item.subdistrict;
         row.querySelector(".temple-strategy").textContent = item.naming_strategy_main;
-        list.appendChild(row);
+        existing.delete(id);
       });
 
+      existing.forEach(element => element.remove());
       document.getElementById("visible-count").textContent = "แสดง " + shown.length + " วัด";
     }
 
@@ -997,17 +927,6 @@
       renderPins();
     }
 
-    const dataHandler = {
-      onDataChanged(data) {
-        currentRecords = data.map(normalizeRecord);
-        sheetTemples = currentRecords;
-        renderAll();
-      }
-    };
-
-    // ==============================
-    // DATA LAYER: Firebase Firestore + fallback
-    // ==============================
     const firebaseConfig = {
       apiKey: "AIzaSyCroWyaI2fCVf1uZFUrU3ItAzQ1Kw24umg",
       authDomain: "chiang-kham-temple.firebaseapp.com",
@@ -1046,7 +965,6 @@
 
     async function initData() {
       try {
-        showLoadingState();
         const remote = await loadRemoteRecords();
         if (remote.length) {
           sheetTemples = remote;
@@ -1064,8 +982,6 @@
         const status = document.getElementById("save-status");
         if (status) status.textContent = "เชื่อม Firebase ไม่สำเร็จ จึงแสดงข้อมูลตั้งต้น";
         return { isOk: false, error: e };
-      } finally {
-        toggleMapLoading(false);
       }
     }
 
@@ -1100,23 +1016,19 @@
       return true;
     }
 
-   function refresh() {
-  // 1. แสดงไอคอนหมุนทันที
-  const listEl = document.getElementById("temple-list");
-  if (listEl) {
-    listEl.innerHTML = `
-      <div class="flex flex-col items-center justify-center p-8 space-y-3">
-        <div class="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
-        <p class="text-xs text-stone-500 font-medium">กำลังอัปเดต...</p>
-      </div>`;
-  }
+    async function refresh() {
+      try {
+        const remote = await loadRemoteRecords();
+        sheetTemples = remote.length ? remote : baseTemples.map(normalizeRecord);
+        currentRecords = sheetTemples;
+        renderAll();
+      } catch (e) {
+        console.error(e);
+        const status = document.getElementById("save-status");
+        if (status) status.textContent = "โหลดฐานข้อมูลไม่สำเร็จ: " + (e.message || e);
+      }
+    }
 
-  // 2. ตั้งเวลาหมุนแค่ 0.3 วินาที แล้วแสดงข้อมูลทันที
-  setTimeout(() => {
-    currentRecords = baseTemples.map(normalizeRecord);
-    renderAll();
-  }, 300);
-}
     async function compressImageFile(file) {
       if (!file || !file.type.startsWith("image/")) throw new Error("กรุณาเลือกไฟล์รูปภาพ");
       const dataUrl = await new Promise((resolve, reject) => { const r = new FileReader(); r.onload=()=>resolve(r.result); r.onerror=()=>reject(new Error("อ่านรูปไม่สำเร็จ")); r.readAsDataURL(file); });
@@ -1181,7 +1093,8 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       setupSelects();
-      lucide.createIcons();
+      if (typeof lucide !== "undefined") lucide.createIcons();
+      renderAll();
       initData();
 
       document.getElementById("search-input").addEventListener("input", event => {
@@ -1239,7 +1152,6 @@
           closeDialog();
         }
       });
-
     });
   </script>
 <script>
