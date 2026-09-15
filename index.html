@@ -1102,17 +1102,12 @@
 
     async function refresh() {
       try {
-        showLoadingState();
         const remote = await loadRemoteRecords();
         sheetTemples = remote.length ? remote : baseTemples.map(normalizeRecord);
         currentRecords = sheetTemples;
         renderAll();
       } catch (e) {
         console.error(e);
-        const status = document.getElementById("save-status");
-        if (status) status.textContent = "โหลดฐานข้อมูลไม่สำเร็จ: " + (e.message || e);
-      } finally {
-        toggleMapLoading(false);
       }
     }
 
