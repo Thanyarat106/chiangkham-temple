@@ -9,8 +9,9 @@
   <title>ฐานข้อมูลที่มาของวัดในอำเภอเชียงคำ จังหวัดพะเยา</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800&amp;family=Playfair+Display:wght@700&amp;display=swap" rel="stylesheet">
   
+  
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800&amp;family=Playfair+Display:wght@700&amp;display=swap" rel="stylesheet">
   <style>
     :root {
       --ink: #20382c;
@@ -56,6 +57,84 @@
       box-shadow: inset 0 0 0 1px rgba(54, 101, 74, .16);
     }
 
+    .map-canvas {
+      position: relative;
+      width: 100%;
+      min-width: 780px;
+      aspect-ratio: 16 / 10;
+    }
+
+    .map-canvas img {
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .map-pin {
+      position: absolute;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      transform: translate(-7px, -18px);
+    }
+
+    .map-dot {
+      position: relative;
+      width: 15px;
+      height: 15px;
+      flex: 0 0 15px;
+      border: 2px solid #fff;
+      border-radius: 999px 999px 999px 0;
+      background: var(--red);
+      box-shadow: 0 3px 8px rgba(78, 30, 28, .35);
+      transform: rotate(-45deg);
+      transition: transform .18s ease, background .18s ease;
+    }
+
+    .map-dot::after {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border-radius: 999px;
+      background: #fff;
+    }
+
+    .map-label {
+      max-width: 118px;
+      overflow: hidden;
+      padding: 3px 7px;
+      border: 1px solid rgba(34, 73, 43, .14);
+      border-radius: 999px;
+      background: rgba(255, 253, 247, .94);
+      color: #294638;
+      font-size: 10px;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      box-shadow: 0 2px 5px rgba(33, 68, 39, .12);
+    }
+
+    .map-pin:hover,
+    .map-pin:focus-visible,
+    .map-pin.active { z-index: 25; }
+
+    .map-pin:hover .map-dot,
+    .map-pin:focus-visible .map-dot,
+    .map-pin.active .map-dot {
+      background: var(--gold);
+      transform: rotate(-45deg) scale(1.3);
+    }
+
+    .map-pin:hover .map-label,
+    .map-pin:focus-visible .map-label,
+    .map-pin.active .map-label {
+      max-width: 190px;
+      background: #fff;
+    }
+
     .strategy-card,
     .district-bar,
     .temple-row {
@@ -85,6 +164,11 @@
 
     @media (max-width: 768px) {
       .map-board { min-height: 350px; }
+      .map-canvas { min-width: 690px; }
+      .map-label { display: none; }
+      .map-pin:hover .map-label,
+      .map-pin:focus-visible .map-label,
+      .map-pin.active .map-label { display: block; }
     }
   
     body:not(.admin-mode) #dialog-edit-button { display:none !important; }
@@ -92,25 +176,25 @@
     .admin-mode #developer-button { background:#b45309; }
   </style>
   
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-  <style>
-    #real-map { width:100%; height:520px; min-height:420px; border-radius:18px; overflow:hidden; }
-    .leaflet-container { z-index: 0 !important; }
-    .leaflet-pane, .leaflet-control, .leaflet-top, .leaflet-bottom { z-index: 1 !important; }
-    #temple-dialog { z-index: 9999 !important; }
-    #admin-login { z-index: 10000 !important; }
-    .leaflet-popup-content { font-family: inherit; }
-    .temple-popup-title { font-weight:800; font-size:15px; margin-bottom:4px; }
-    .temple-popup-zh { color:#557064; font-size:12px; margin-bottom:8px; }
-    .temple-popup-btn { display:inline-block; margin-top:4px; padding:7px 10px; border-radius:9px; background:#356b3b; color:#fff !important; text-decoration:none; font-weight:700; font-size:12px; }
-    .temple-popup-map { background:#d88f2c; margin-left:5px; }
-  </style>
-  <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
+ <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<style>
+#real-map { width:100%; height:520px; min-height:420px; border-radius:18px; overflow:hidden; }
+.leaflet-container { z-index: 0 !important; }
+.leaflet-pane, .leaflet-control, .leaflet-top, .leaflet-bottom { z-index: 1 !important; }
+#temple-dialog { z-index: 9999 !important; }
+#admin-login { z-index: 10000 !important; }
+.leaflet-popup-content { font-family: inherit; }
+.temple-popup-title { font-weight:800; font-size:15px; margin-bottom:4px; }
+.temple-popup-zh { color:#557064; font-size:12px; margin-bottom:8px; }
+.temple-popup-btn { display:inline-block; margin-top:4px; padding:7px 10px; border-radius:9px; background:#356b3b; color:#fff !important; text-decoration:none; font-weight:700; font-size:12px; }
+.temple-popup-map { background:#d88f2c; margin-left:5px; }
+</style>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
 </head>
-<body data-template-id="__page-root" class="app-shell" style="background: rgb(247, 247, 239);">
+ <body data-template-id="__page-root" class="app-shell" style="background: rgb(247, 247, 239);">
   <header data-template-id="header-banner" class="canva-banner border-b border-emerald-950/10" style="background: linear-gradient(135deg, rgb(231, 244, 217), rgb(198, 231, 219));">
    <div class="w-full max-w-7xl mx-auto px-5 py-7 md:px-8 md:py-9">
     <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
@@ -201,7 +285,6 @@
       <p id="admin-login-status" class="mt-3 text-sm font-semibold"></p>
     </div>
   </div>
-  
   <div id="admin-panel" class="fixed bottom-5 right-5 z-40 hidden w-[min(94vw,520px)] rounded-3xl bg-white p-5 shadow-2xl ring-1 ring-emerald-950/10">
     <div class="flex items-start justify-between gap-3"><div><p class="text-xs font-bold uppercase tracking-widest text-amber-700">Developer mode</p><h3 class="text-xl font-extrabold text-emerald-950">จัดการข้อมูลวัด</h3></div><button id="admin-logout" class="rounded-xl bg-stone-100 px-3 py-2 text-sm font-bold">ออกจากโหมด</button></div>
     <div class="mt-4 grid gap-3 sm:grid-cols-2">
@@ -227,7 +310,6 @@
     <p data-template-id="footer-text" class="canva-text text-sm" style="color: rgb(217, 234, 215); font-weight: 400; font-style: normal; font-size: 14px;">ฐานข้อมูลที่มาของวัดในอำเภอเชียงคำ จังหวัดพะเยา • ไทย–จีน</p>
    </div>
   </footer>
-
   <div id="temple-dialog" data-template-id="temple-dialog" class="canva-panel dialog-backdrop fixed inset-0 z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="dialog-heading" style="background: rgba(20, 44, 28, 0.62);">
    <div class="dialog-panel w-full max-w-4xl overflow-y-auto rounded-3xl bg-[#fffdf7] shadow-2xl">
     <div class="sticky top-0 z-10 flex items-start justify-between border-b border-emerald-950/10 bg-[#fffdf7]/95 px-5 py-5 backdrop-blur md:px-7">
@@ -297,6 +379,7 @@
         </div>
         <div><label class="mb-1 block text-sm font-bold" for="dialog-latitude">พิกัด Latitude</label><input id="dialog-latitude" type="number" step="any" class="w-full rounded-xl border border-emerald-900/15 bg-white px-3 py-2"></div>
         <div><label class="mb-1 block text-sm font-bold" for="dialog-longitude">พิกัด Longitude</label><input id="dialog-longitude" type="number" step="any" class="w-full rounded-xl border border-emerald-900/15 bg-white px-3 py-2"></div>
+        </div>
        </div>
        <div class="mt-4 flex items-center gap-3"><button id="dialog-save-button" data-template-id="dialog-save-button" type="submit" class="canva-button rounded-xl px-4 py-2 text-sm font-bold" style="background: rgb(216, 143, 44); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;">บันทึกการแก้ไข</button><span id="dialog-save-status" class="text-sm font-semibold"></span>
        </div>
@@ -305,7 +388,6 @@
     </div>
    </div>
   </div>
-
   <template id="temple-row-template"><button type="button" class="temple-row flex w-full items-center justify-between gap-3 px-4 py-4 text-left focus:outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-600">
     <div class="min-w-0">
      <p class="temple-name font-bold"></p>
@@ -316,7 +398,6 @@
      <p class="temple-strategy mt-1 max-w-40 text-xs leading-4 text-stone-500"></p>
     </div></button>
   </template>
-
   <script>
     const subdistricts = ["ทุ่งผาสุข", "น้ำแวน", "ฝายกวาง", "ร่มเย็น", "หย่วน", "อ่างทอง", "เจดีย์คำ", "เชียงบาน", "เวียง", "แม่ลาว"];
 
@@ -567,7 +648,6 @@
     }
 
     function fillSelect(select, values, emptyLabel) {
-      if(!select) return;
       select.innerHTML = "";
       if (emptyLabel !== null) {
         const option = document.createElement("option");
@@ -584,10 +664,14 @@
     }
 
     function setupSelects() {
-      fillSelect(document.getElementById("subdistrict-filter"), subdistricts, "ทุกตำบล");
-      fillSelect(document.getElementById("strategy-filter"), strategyOrder, "ทุกกลวิธี");
-      fillSelect(document.getElementById("add-subdistrict"), subdistricts, null);
-      fillSelect(document.getElementById("add-strategy"), strategyOrder, null);
+      const filter = document.getElementById("subdistrict-filter");
+      const strategy = document.getElementById("strategy-filter");
+      if (filter) {
+        fillSelect(filter, subdistricts, "ทุกตำบล");
+      }
+      if (strategy) {
+        fillSelect(strategy, strategyOrder, "ทุกกลวิธี");
+      }
     }
 
     function renderTotals() {
@@ -598,7 +682,6 @@
 
     function renderStrategySummary() {
       const holder = document.getElementById("strategy-summary");
-      if (!holder) return;
       const records = filteredTemples();
       const all = mergedTemples();
       holder.innerHTML = "";
@@ -634,7 +717,6 @@
     function renderDistrictChart() {
       const chart = document.getElementById("subdistrict-chart");
       const labels = document.getElementById("subdistrict-labels");
-      if (!chart || !labels) return;
       chart.innerHTML = "";
       labels.innerHTML = "";
 
@@ -693,7 +775,6 @@
 
     function renderList() {
       const list = document.getElementById("temple-list");
-      if (!list) return;
       const shown = filteredTemples();
       const existing = new Map([...list.children].map(element => [element.dataset.templeId, element]));
 
@@ -723,6 +804,7 @@
     let realMap = null;
     let realMarkers = new Map();
 
+    // ตำแหน่งชั่วคราวระดับตำบล: ใช้สำหรับแสดงแผนที่จริงก่อนมีพิกัดรายวัด
     const subdistrictCenters = {
       "ทุ่งผาสุข": [19.50, 100.38],
       "น้ำแวน": [19.48, 100.47],
@@ -738,8 +820,6 @@
 
     function ensureRealMap() {
       if (realMap) return;
-      const mapEl = document.getElementById('real-map');
-      if (!mapEl) return;
       realMap = L.map('real-map', { zoomControl: true }).setView([19.42, 100.48], 11);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -747,9 +827,13 @@
       }).addTo(realMap);
     }
 
+    function openGoogleMaps(item) {
+      const url = item.google_maps_url || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(item.name_th + ' ตำบล' + item.subdistrict + ' อำเภอเชียงคำ จังหวัดพะเยา'));
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+
     function renderPins() {
       ensureRealMap();
-      if (!realMap) return;
       const shown = filteredTemples();
       const visibleIds = new Set(shown.map(item => String(item.temple_id)));
 
@@ -768,6 +852,7 @@
         } else {
           const center = subdistrictCenters[item.subdistrict];
           if (!center) return;
+          // กระจายหมุดชั่วคราวรอบศูนย์กลางตำบล เพื่อไม่ให้หมุดทั้งตำบลซ้อนกัน
           const sameDistrict = mergedTemples().filter(t => t.subdistrict === item.subdistrict);
           const localIndex = sameDistrict.findIndex(t => Number(t.temple_id) === Number(item.temple_id));
           const angle = localIndex * 2.399963229728653;
@@ -830,7 +915,6 @@
       document.getElementById("dialog-history-zh").value = item.history_zh || "";
       document.getElementById("dialog-map-link").value = item.google_maps_url || "";
       document.getElementById("dialog-image-url").value = item.image_url || "";
-      
       const photoWrap = document.getElementById("dialog-photo-wrap"), photo = document.getElementById("dialog-photo");
       if (item.image_url) { photo.src = item.image_url; photoWrap.classList.remove("hidden"); } else { photo.removeAttribute("src"); photoWrap.classList.add("hidden"); }
       const imageStatus = document.getElementById("dialog-image-status"); if (imageStatus) imageStatus.textContent = item.image_url ? "มีรูปประจำวัดแล้ว — เลือกรูปใหม่เพื่อเปลี่ยนรูป" : "ยังไม่มีรูป — กด “เพิ่มรูปจากเครื่อง” ได้เลย";
@@ -850,7 +934,17 @@
       renderPins();
     }
 
-    // Firebase Integration
+    const dataHandler = {
+      onDataChanged(data) {
+        currentRecords = data.map(normalizeRecord);
+        sheetTemples = currentRecords;
+        renderAll();
+      }
+    };
+
+    // ==============================
+    // DATA LAYER: Firebase Firestore + fallback
+    // ==============================
     const firebaseConfig = {
       apiKey: "AIzaSyCroWyaI2fCVf1uZFUrU3ItAzQ1Kw24umg",
       authDomain: "chiang-kham-temple.firebaseapp.com",
@@ -882,11 +976,10 @@
     }
 
     async function loadRemoteRecords() {
-  // เติม ?t=timestamp เพื่อป้องกัน Browser Cache
-  const response = await fetch(`YOUR_API_URL?t=${Date.now()}`);
-  if (!response.ok) throw new Error("Fetch failed");
-  return await response.json();
-}
+      if (!firebaseReady) return localRows();
+      const snapshot = await firestoreDb.collection(FIREBASE_COLLECTION).orderBy("temple_id", "asc").get();
+      return snapshot.docs.map(doc => normalizeRecord(doc.data()));
+    }
 
     async function initData() {
       try {
@@ -942,41 +1035,36 @@
     }
 
     async function refresh() {
-  const status = document.getElementById("save-status");
-  
-  try {
-    if (status) status.textContent = "กำลังโหลด...";
-    
-    const remote = await loadRemoteRecords();
-    
-    // Debug ดูค่าจริงที่ส่งกลับมา
-    console.log("Remote response:", remote);
+      // 1. แสดงตัวหมุนโหลดทันทีเมื่อเริ่มกดอัปเดต
+      const listEl = document.getElementById("temple-list");
+      if (listEl) {
+        listEl.innerHTML = `
+          <div class="flex flex-col items-center justify-center p-8 space-y-3">
+            <div class="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-xs text-stone-500 font-medium">กำลังอัปเดตข้อมูลล่าสุด...</p>
+          </div>`;
+      }
 
-    // ตรวจสอบโครงสร้างข้อมูลให้ครอบคลุม
-    let freshData = null;
-    if (Array.isArray(remote) && remote.length > 0) {
-      freshData = remote;
-    } else if (remote && Array.isArray(remote.data) && remote.data.length > 0) {
-      freshData = remote.data; // กรณี API ครอบด้วย { data: [...] }
+      try {
+        // 2. ดึงข้อมูลใหม่แบบเร่งด่วน (ใส่ cache-bust เพื่อให้ได้ข้อมูลใหม่ทันที ไม่ติดแคช)
+        const response = await fetch(`data.json?t=${Date.now()}`);
+        if (response.ok) {
+          const newData = await response.json();
+          sheetTemples = newData.map(normalizeRecord);
+          currentRecords = sheetTemples;
+        } else {
+          // หากดึงไฟล์ไม่ได้ ให้ดึงจาก Remote สำรอง
+          const remote = await loadRemoteRecords();
+          sheetTemples = remote.length ? remote : baseTemples.map(normalizeRecord);
+          currentRecords = sheetTemples;
+        }
+      } catch (e) {
+        console.error("Update failed, using local cache:", e);
+      } finally {
+        // 3. หมุนเสร็จแล้วแสดงข้อมูลใหม่ทันที
+        renderAll();
+      }
     }
-
-    if (freshData) {
-      sheetTemples = freshData;
-      console.log("ใช้ข้อมูลใหม่จาก Remote");
-    } else {
-      console.warn("ไม่พบข้อมูลใหม่ ใช้ baseTemples สำรอง");
-      sheetTemples = baseTemples.map(normalizeRecord);
-    }
-
-    currentRecords = sheetTemples;
-    renderAll();
-    
-    if (status) status.textContent = "อัปเดตเรียบร้อย";
-  } catch (e) {
-    console.error(e);
-    if (status) status.textContent = "เกิดข้อผิดพลาด: " + (e.message || e);
-  }
-}
 
     async function compressImageFile(file) {
       if (!file || !file.type.startsWith("image/")) throw new Error("กรุณาเลือกไฟล์รูปภาพ");
@@ -1042,7 +1130,7 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       setupSelects();
-      if (window.lucide) { lucide.createIcons(); }
+      lucide.createIcons();
       renderAll();
       initData();
 
@@ -1101,47 +1189,46 @@
           closeDialog();
         }
       });
+
+
     });
-
-    (function(){
-      function openLogin(){const e=document.getElementById("admin-login");if(!e)return;e.classList.remove("hidden");e.classList.add("flex");document.getElementById("admin-email")?.focus();}
-      function closeLogin(){const e=document.getElementById("admin-login");if(!e)return;e.classList.add("hidden");e.classList.remove("flex");}
-      function setAdmin(on){document.body.classList.toggle("admin-mode",on);const p=document.getElementById("admin-panel"),b=document.getElementById("developer-button");if(p)p.classList.toggle("hidden",!on);if(b)b.textContent=on?"🛠 โหมดผู้พัฒนา":"🔐 ผู้พัฒนา";if(!on)closeLogin();}
-      
-      async function login(){
-        const email=document.getElementById("admin-email"),pass=document.getElementById("admin-password"),status=document.getElementById("admin-login-status");
-        if(!email.value.trim()||!pass.value){status.textContent="กรุณากรอกอีเมลและรหัสผ่าน";return;}
-        status.textContent="กำลังเข้าสู่ระบบ...";
-        try {
-          const cred=await firebaseAuth.signInWithEmailAndPassword(email.value.trim(),pass.value);
-          if(!isDeveloperUser(cred.user)){await firebaseAuth.signOut();status.textContent="บัญชีนี้ไม่มีสิทธิ์ผู้พัฒนา";return;}
-          setAdmin(true);closeLogin();pass.value="";
-          const seeded=await seedBaseDataIfEmpty();
-          await refresh();
-          const saveStatus=document.getElementById("save-status");
-          if(saveStatus) saveStatus.textContent=seeded?"เชื่อม Firebase แล้ว และเพิ่มข้อมูลตั้งต้น 95 วัดเรียบร้อย ✓":"เชื่อม Firebase แล้ว ✓";
-        } catch(error){
-          console.error(error);
-          status.textContent="เข้าสู่ระบบไม่สำเร็จ: "+(error.message||error);
-        }
-      }
-
-      document.addEventListener("DOMContentLoaded",function(){
-        const d=document.getElementById("developer-button"),s=document.getElementById("admin-login-submit"),c=document.getElementById("admin-login-close"),p=document.getElementById("admin-password"),l=document.getElementById("admin-logout");
-        d?.addEventListener("click",async()=>{if(document.body.classList.contains("admin-mode")){await firebaseAuth.signOut();setAdmin(false);}else openLogin();});
-        c?.addEventListener("click",closeLogin); s?.addEventListener("click",login); p?.addEventListener("keydown",e=>{if(e.key==="Enter")login();});
-        l?.addEventListener("click",async()=>{await firebaseAuth.signOut();setAdmin(false);});
-        document.getElementById("export-data")?.addEventListener("click",exportJSON);
-        document.getElementById("import-data")?.addEventListener("change",e=>importJSON(e.target.files?.[0]));
-        
-        firebaseAuth.onAuthStateChanged(async user=>{
-          if(!user){setAdmin(false);return;}
-          if(!isDeveloperUser(user)){await firebaseAuth.signOut();setAdmin(false);return;}
-          setAdmin(true);
-          try { await seedBaseDataIfEmpty(); await refresh(); } catch(e){ console.error(e); }
-        });
-      });
-    })();
   </script>
-</body>
-</html>
+<script>
+(function(){
+  function openLogin(){const e=document.getElementById("admin-login");if(!e)return;e.classList.remove("hidden");e.classList.add("flex");document.getElementById("admin-email")?.focus();}
+  function closeLogin(){const e=document.getElementById("admin-login");if(!e)return;e.classList.add("hidden");e.classList.remove("flex");}
+  function setAdmin(on){document.body.classList.toggle("admin-mode",on);const p=document.getElementById("admin-panel"),b=document.getElementById("developer-button");if(p)p.classList.toggle("hidden",!on);if(b)b.textContent=on?"🛠 โหมดผู้พัฒนา":"🔐 ผู้พัฒนา";if(!on)closeLogin();}
+  async function login(){
+    const email=document.getElementById("admin-email"),pass=document.getElementById("admin-password"),status=document.getElementById("admin-login-status");
+    if(!email.value.trim()||!pass.value){status.textContent="กรุณากรอกอีเมลและรหัสผ่าน";return;}
+    status.textContent="กำลังเข้าสู่ระบบ...";
+    try {
+      const cred=await firebaseAuth.signInWithEmailAndPassword(email.value.trim(),pass.value);
+      if(!isDeveloperUser(cred.user)){await firebaseAuth.signOut();status.textContent="บัญชีนี้ไม่มีสิทธิ์ผู้พัฒนา";return;}
+      setAdmin(true);closeLogin();pass.value="";
+      const seeded=await seedBaseDataIfEmpty();
+      await refresh();
+      const saveStatus=document.getElementById("save-status");
+      if(saveStatus) saveStatus.textContent=seeded?"เชื่อม Firebase แล้ว และเพิ่มข้อมูลตั้งต้น 95 วัดเรียบร้อย ✓":"เชื่อม Firebase แล้ว ✓";
+    } catch(error){
+      console.error(error);
+      status.textContent="เข้าสู่ระบบไม่สำเร็จ: "+(error.message||error);
+    }
+  }
+  document.addEventListener("DOMContentLoaded",function(){
+    const d=document.getElementById("developer-button"),s=document.getElementById("admin-login-submit"),c=document.getElementById("admin-login-close"),p=document.getElementById("admin-password"),l=document.getElementById("admin-logout");
+    d?.addEventListener("click",async()=>{if(document.body.classList.contains("admin-mode")){await firebaseAuth.signOut();setAdmin(false);}else openLogin();});
+    c?.addEventListener("click",closeLogin); s?.addEventListener("click",login); p?.addEventListener("keydown",e=>{if(e.key==="Enter")login();});
+    l?.addEventListener("click",async()=>{await firebaseAuth.signOut();setAdmin(false);});
+    document.getElementById("export-data")?.addEventListener("click",exportJSON);
+    document.getElementById("import-data")?.addEventListener("change",e=>importJSON(e.target.files?.[0]));
+    firebaseAuth.onAuthStateChanged(async user=>{
+      if(!user){setAdmin(false);return;}
+      if(!isDeveloperUser(user)){await firebaseAuth.signOut();setAdmin(false);return;}
+      setAdmin(true);
+      try { await seedBaseDataIfEmpty(); await refresh(); } catch(e){ console.error(e); }
+    });
+  });
+})();
+</script>
+</body></html>
