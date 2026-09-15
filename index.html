@@ -882,10 +882,11 @@
     }
 
     async function loadRemoteRecords() {
-      if (!firebaseReady) return localRows();
-      const snapshot = await firestoreDb.collection(FIREBASE_COLLECTION).orderBy("temple_id", "asc").get();
-      return snapshot.docs.map(doc => normalizeRecord(doc.data()));
-    }
+  // เติม ?t=timestamp เพื่อป้องกัน Browser Cache
+  const response = await fetch(`YOUR_API_URL?t=${Date.now()}`);
+  if (!response.ok) throw new Error("Fetch failed");
+  return await response.json();
+}
 
     async function initData() {
       try {
@@ -940,30 +941,38 @@
       return true;
     }
 
-  async function refresh() {
+ async function refresh() {
   const status = document.getElementById("save-status");
-  
-  try {
-    // 1. แสดงสถานะกำลังโหลด และอาจจะซ่อนหรือล้างหน้าจอไว้ก่อน
-    if (status) status.textContent = "กำลังโหลดข้อมูล...";
-    
-    // หากต้องการซ่อนส่วนแสดงผลไว้ก่อน สามารถสั่งเคลียร์ UI ได้ที่นี่
-    // document.getElementById("content-container").style.display = "none";
+  const container = document.getElementById("content-container"); // ใส่ ID ของโซนแสดงผลข้อมูลคุณ
 
+  try {
+    if (status) status.textContent = "กำลังโหลดข้อมูลใหม่ล่าสุด...";
+    
+    // เคลียร์ข้อมูลเก่าออกจากหน้าจอทันที
+    if (container) container.innerHTML = ""; 
+    
+    // ดึงข้อมูล
     const remote = await loadRemoteRecords();
-    sheetTemples = remote.length ? remote : baseTemples.map(normalizeRecord);
+    
+    // ตรวจสอบว่าดึง Remote ได้จริงหรือไม่
+    console.log("Remote Data Received:", remote);
+
+    if (remote && remote.length > 0) {
+      sheetTemples = remote;
+    } else {
+      console.warn("Remote empty, falling back to baseTemples");
+      sheetTemples = baseTemples.map(normalizeRecord);
+    }
+
     currentRecords = sheetTemples;
 
-    // 2. โหลดข้อมูลสำเร็จแล้วจึงสั่งวาด UI ใหม่
+    // แสดงผลข้อมูลใหม่
     renderAll();
-
-    // 3. แสดงผลหน้าจออีกครั้ง (ถ้ามีการสั่งซ่อนไว้) และล้างข้อความสถานะ
-    // document.getElementById("content-container").style.display = "block";
-    if (status) status.textContent = ""; 
+    if (status) status.textContent = "อัปเดตข้อมูลสำเร็จ";
 
   } catch (e) {
-    console.error(e);
-    if (status) status.textContent = "โหลดฐานข้อมูลไม่สำเร็จ: " + (e.message || e);
+    console.error("Refresh Error:", e);
+    if (status) status.textContent = "โหลดข้อมูลไม่สำเร็จ: " + (e.message || e);
   }
 }
 
