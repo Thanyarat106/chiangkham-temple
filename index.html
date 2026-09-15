@@ -10,6 +10,7 @@
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
   
+  
   <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800&amp;family=Playfair+Display:wght@700&amp;display=swap" rel="stylesheet">
   <style>
     :root {
@@ -186,7 +187,7 @@
 .leaflet-popup-content { font-family: inherit; }
 .temple-popup-title { font-weight:800; font-size:15px; margin-bottom:4px; }
 .temple-popup-zh { color:#557064; font-size:12px; margin-bottom:8px; }
-.temple-popup-btn { display:inline-block; margin-top:4px; padding:7px 10px; border-radius:99px; background:#356b3b; color:#fff !important; text-decoration:none; font-weight:700; font-size:12px; }
+.temple-popup-btn { display:inline-block; margin-top:4px; padding:7px 10px; border-radius:9px; background:#356b3b; color:#fff !important; text-decoration:none; font-weight:700; font-size:12px; }
 .temple-popup-map { background:#d88f2c; margin-left:5px; }
 </style>
 <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
@@ -583,14 +584,14 @@
 
     const baseTemples = rawTemples.split("\n").map((line, index, all) => {
       const [name_th, subdistrict, naming_strategy_main] = line.split("|");
-      const area = mapAreas[subdistrict];
+      const area = mapAreas[subdistrict] || [50, 50];
       const localIndex = all.slice(0, index).filter(item => item.split("|")[1] === subdistrict).length;
       const angle = localIndex * 2.399963229728653;
       const radius = 2.4 + (localIndex % 5) * 1.35;
       const map_x = Math.max(7, Math.min(93, area[0] + Math.cos(angle) * radius * 1.6));
       const map_y = Math.max(8, Math.min(91, area[1] + Math.sin(angle) * radius));
-      const history_th = name_th + " จัดอยู่ในกลวิธี “" + naming_strategy_main + "” โดย" + strategyHistories[naming_strategy_main];
-      const history_zh = chineseTempleName(name_th) + " 的名称分类为“" + strategyChinese[naming_strategy_main] + "”。" + strategyChinese[naming_strategy_main] + "反映当地社区、地理环境与信仰记忆之间的联系。";
+      const history_th = name_th + " จัดอยู่ในกลวิธี “" + naming_strategy_main + "” โดย" + (strategyHistories[naming_strategy_main] || "");
+      const history_zh = chineseTempleName(name_th) + " 的名称分类为“" + (strategyChinese[naming_strategy_main] || "") + "”。" + (strategyChinese[naming_strategy_main] || "") + "反映当地社区、地理环境与信仰记忆之间的联系。";
 
       return {
         temple_id: index + 1,
@@ -648,7 +649,7 @@
     function fillSelect(select, values, emptyLabel) {
       if (!select) return;
       select.innerHTML = "";
-      if (emptyLabel !== null && emptyLabel !== undefined) {
+      if (emptyLabel !== null) {
         const option = document.createElement("option");
         option.value = "";
         option.textContent = emptyLabel;
@@ -663,10 +664,15 @@
     }
 
     function setupSelects() {
-      fillSelect(document.getElementById("subdistrict-filter"), subdistricts, "ทุกตำบล");
-      fillSelect(document.getElementById("strategy-filter"), strategyOrder, "ทุกกลวิธี");
-      fillSelect(document.getElementById("add-subdistrict"), subdistricts, "เลือกตำบล");
-      fillSelect(document.getElementById("add-strategy"), strategyOrder, "เลือกกลวิธี");
+      const filter = document.getElementById("subdistrict-filter");
+      const strategy = document.getElementById("strategy-filter");
+      const addSubdistrict = document.getElementById("add-subdistrict");
+      const addStrategy = document.getElementById("add-strategy");
+      
+      if (filter) fillSelect(filter, subdistricts, "ทุกตำบล");
+      if (strategy) fillSelect(strategy, strategyOrder, "ทุกกลวิธี");
+      if (addSubdistrict) fillSelect(addSubdistrict, subdistricts, "เลือกตำบล *");
+      if (addStrategy) fillSelect(addStrategy, strategyOrder, "เลือกกลวิธี *");
     }
 
     function renderTotals() {
@@ -844,8 +850,7 @@
         if (item.latitude && item.longitude) {
           coords = [Number(item.latitude), Number(item.longitude)];
         } else {
-          const center = subdistrictCenters[item.subdistrict];
-          if (!center) return;
+          const center = subdistrictCenters[item.subdistrict] || [19.42, 100.48];
           const sameDistrict = mergedTemples().filter(t => t.subdistrict === item.subdistrict);
           const localIndex = sameDistrict.findIndex(t => Number(t.temple_id) === Number(item.temple_id));
           const angle = localIndex * 2.399963229728653;
@@ -1093,7 +1098,7 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       setupSelects();
-      if (typeof lucide !== "undefined") lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
       renderAll();
       initData();
 
