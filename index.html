@@ -1035,36 +1035,55 @@
     }
 
     async function refresh() {
-      // 1. แสดงตัวหมุนโหลดทันทีเมื่อเริ่มกดอัปเดต
-      const listEl = document.getElementById("temple-list");
-      if (listEl) {
-        listEl.innerHTML = `
-          <div class="flex flex-col items-center justify-center p-8 space-y-3">
-            <div class="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
-            <p class="text-xs text-stone-500 font-medium">กำลังอัปเดตข้อมูลล่าสุด...</p>
-          </div>`;
-      }
+  const listEl = document.getElementById("temple-list");
 
-      try {
-        // 2. ดึงข้อมูลใหม่แบบเร่งด่วน (ใส่ cache-bust เพื่อให้ได้ข้อมูลใหม่ทันที ไม่ติดแคช)
-        const response = await fetch(`data.json?t=${Date.now()}`);
-        if (response.ok) {
-          const newData = await response.json();
-          sheetTemples = newData.map(normalizeRecord);
-          currentRecords = sheetTemples;
-        } else {
-          // หากดึงไฟล์ไม่ได้ ให้ดึงจาก Remote สำรอง
-          const remote = await loadRemoteRecords();
-          sheetTemples = remote.length ? remote : baseTemples.map(normalizeRecord);
-          currentRecords = sheetTemples;
-        }
-      } catch (e) {
-        console.error("Update failed, using local cache:", e);
-      } finally {
-        // 3. หมุนเสร็จแล้วแสดงข้อมูลใหม่ทันที
-        renderAll();
-      }
+  // 1. แสดงตัวหมุน และสั่งให้ UI อัปเดตทันที
+  if (listEl) {
+    listEl.innerHTML = `
+      <div class="flex flex-col items-center justify-center p-8 space-y-3">
+        <div class="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+        <p class="text-xs text-stone-500 font-medium">กำลังอัปเดตข้อมูลล่าสุด...</p>
+      </div>`;
+  } else {
+    console.warn("หา element ID 'temple-list' ไม่พบ");
+  }
+
+  // หน่วงเวลา 300ms เพื่อบังคับให้เบราว์เซอร์วาด (Render) ตัวหมุนให้ผู้ใช้เห็นก่อน
+  await new Promise(resolve => setTimeout(resolve, 300));
+
+  try {
+    // 2. ดึงข้อมูลใหม่
+    const response = await fetch(`data.json?t=${Date.now()}`, {
+      headers: { 'Cache-Control': 'no-cache' }
+    });
+
+    if (response.ok) {
+      const newData = await response.json();
+      console.log("ดึงข้อมูลสำเร็จ:", newData);
+
+      // แปลงข้อมูลและอัปเดตตัวแปร
+      sheetTemples = newData.map(normalizeRecord);
+      currentRecords = sheetTemples;
+    } else {
+      throw new Error(`โหลด data.json ไม่สำเร็จ (Status: ${response.status})`);
     }
+  } catch (e) {
+    console.error("Fetch data.json พลาด, สลับไปใช้ Remote/Base:", e);
+    
+    try {
+      const remote = await loadRemoteRecords();
+      sheetTemples = (remote && remote.length) ? remote : baseTemples.map(normalizeRecord);
+    } catch (errRemote) {
+      console.error("Remote พลาดด้วย ใช้ Base แทน:", errRemote);
+      sheetTemples = baseTemples.map(normalizeRecord);
+    }
+    
+    currentRecords = sheetTemples;
+  } finally {
+    // 3. วาด UI ใหม่ด้วยข้อมูลล่าสุด
+    renderAll();
+  }
+}
 
     async function compressImageFile(file) {
       if (!file || !file.type.startsWith("image/")) throw new Error("กรุณาเลือกไฟล์รูปภาพ");
